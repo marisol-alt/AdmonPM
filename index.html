@@ -568,8 +568,8 @@ function buildReport(){
         const vdA=dA*emp.sd,prA=vdA*.25,totA=vdA+prA;
         const dPbruto=gP.reduce((s,p)=>s+p.pend,0);
         const dSol=gP.reduce((s,p)=>s+p.detS.length,0);
-        const dPneto=Math.max(0,dPbruto-dSol);
         const dExp=gExp.reduce((s,p)=>s+p.pend,0);
+        const dPneto=Math.max(0,dPbruto-dSol-dExp);
         const totalDias=dA+Math.max(0,dPbruto-dExp);
 
         totAD+=dA; totAP+=totA; totSol+=dSol; totPT+=dPneto; totTotal+=totalDias;
@@ -657,35 +657,86 @@ function closeReport(){document.getElementById('repModal').classList.remove('ope
 function printReport(){
     const html=document.getElementById('repContent').innerHTML;
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-    const win=window.open('','_blank','width=1100,height=750');
-    win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte Vacaciones<\/title>'
-    +'<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">'
-    +'<style>'
-    +'*{margin:0;padding:0;box-sizing:border-box;}'
-    +'@page{size:A4 landscape;margin:14mm 12mm;}'
-    +'body{font-family:\'DM Sans\',sans-serif;font-size:9.5px;color:#1c1c2e;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:16px 20px;}'
-    +'.print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1c1c2e;}'
-    +'h1{font-family:\'DM Serif Display\',serif;font-size:1.1rem;}'
-    +'table{width:100%;border-collapse:collapse;table-layout:fixed;}'
-    +'thead tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'thead th{padding:6px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;border-right:1px solid rgba(255,255,255,.15);text-align:center;vertical-align:middle;}'
-    +'thead th:first-child{text-align:left;}'
-    +'tbody tr{border-bottom:1px solid #e2e0f0;}'
-    +'tbody tr:nth-child(even){background:#f9f8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'td{padding:6px 8px;border-right:1px solid #e2e0f0;vertical-align:middle;}'
-    +'td:last-child{border-right:none;}'
-    +'tfoot tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'tfoot td{padding:6px 8px;font-weight:600;font-size:9px;border-right:1px solid rgba(255,255,255,.15);}'
-    +'.border-wrap{border-radius:8px;overflow:hidden;border:1px solid #e2e0f0;}'
-    +'div[style*="border-left:3px"]{margin-top:12px;padding:8px 12px;font-size:9px;line-height:1.5;}'
-    +'@media print{.no-print{display:none!important;}}'
-    +'<\/style><\/head><body>'
-    +'<div class="print-hdr">'
-    +'<div><h1>Reporte de Vacaciones<\/h1><span style="font-size:.75rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.<\/span><\/div>'
-    +'<span style="font-size:.72rem;color:#9898b8;">'+today+'<\/span>'
-    +'<\/div>'
-    +html
-    +'<script>window.onload=function(){window.print();};<\/script><\/body><\/html>');
+    const win=window.open('','_blank','width=1100,height=820');
+    win.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+    <title>Reporte Vacaciones<\/title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <style id="pageStyle">
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;font-size:9.5px;color:#1c1c2e;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:16px 20px;}
+        .ctrl-bar{display:flex;gap:10px;align-items:center;padding:12px 16px;background:#f5f4f0;border-bottom:1px solid #ddd;margin:-16px -20px 16px;flex-wrap:wrap;}
+        .ctrl-bar label{font-size:12px;color:#52526e;display:flex;align-items:center;gap:6px;}
+        .ctrl-bar select{padding:5px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:white;}
+        .print-btn-c{padding:7px 18px;background:#1c1c2e;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+        .print-btn-c:hover{opacity:.85;}
+        .print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1c1c2e;}
+        h1{font-family:'DM Serif Display',serif;font-size:1.1rem;}
+        table{width:100%;border-collapse:collapse;table-layout:fixed;}
+        thead tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+        thead th{padding:6px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;border-right:1px solid rgba(255,255,255,.15);text-align:center;vertical-align:middle;}
+        thead th:first-child{text-align:left;}
+        tbody tr{border-bottom:1px solid #e2e0f0;}
+        tbody tr:nth-child(even){background:#f9f8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+        td{padding:6px 8px;border-right:1px solid #e2e0f0;vertical-align:middle;}
+        td:last-child{border-right:none;}
+        tfoot tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+        tfoot td{padding:6px 8px;font-weight:600;font-size:9px;border-right:1px solid rgba(255,255,255,.15);}
+        div[style*="border-left:3px"]{margin-top:12px;padding:8px 12px;font-size:9px;line-height:1.5;}
+        @media print{.ctrl-bar{display:none!important;}}
+    <\/style>
+    <\/head><body>
+    <div class="ctrl-bar">
+        <label>Orientación:
+            <select id="selOrient" onchange="updatePage()">
+                <option value="landscape">Horizontal</option>
+                <option value="portrait">Vertical</option>
+            </select>
+        </label>
+        <label>Páginas:
+            <select id="selPages" onchange="updatePage()">
+                <option value="multi">Múltiples hojas (tamaño normal)</option>
+                <option value="single">Una sola hoja (ajustar todo)</option>
+            </select>
+        </label>
+        <button class="print-btn-c" onclick="window.print()">🖨 Imprimir / PDF</button>
+    </div>
+    <div class="print-hdr">
+        <div><h1>Reporte de Vacaciones<\/h1><span style="font-size:.75rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.<\/span><\/div>
+        <span style="font-size:.72rem;color:#9898b8;">${today}<\/span>
+    <\/div>
+    ${html}
+    <script>
+    function updatePage(){
+        const orient=document.getElementById('selOrient').value;
+        const pages=document.getElementById('selPages').value;
+        let css='*{margin:0;padding:0;box-sizing:border-box;}';
+        css+='body{font-family:\\'DM Sans\\',sans-serif;color:#1c1c2e;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:16px 20px;}';
+        if(pages==='single'){
+            css+='@page{size:A4 '+orient+';margin:8mm;}';
+            css+='table{font-size:7px!important;}';
+            css+='thead th{padding:4px 5px!important;font-size:6.5px!important;}';
+            css+='td,tfoot td{padding:3px 5px!important;font-size:7px!important;}';
+            css+='div[style*="font-size:20px"]{font-size:12px!important;}';
+            css+='div[style*="font-size:15px"]{font-size:11px!important;}';
+            css+='div[style*="font-size:18px"]{font-size:12px!important;}';
+            css+='div[style*="font-size:11.5px"]{font-size:7.5px!important;}';
+            css+='div[style*="font-size:10.5px"]{font-size:7px!important;}';
+            css+='.print-hdr h1{font-size:.9rem!important;}';
+        } else {
+            css+='@page{size:A4 '+orient+';margin:12mm 10mm;}';
+            css+='table{font-size:9.5px;}';
+            css+='thead th{padding:6px 8px;font-size:8px;}';
+            css+='td{padding:6px 8px;}';
+        }
+        css+='thead tr{background:#1c1c2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}';
+        css+='tbody tr:nth-child(even){background:#f9f8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}';
+        css+='tfoot tr{background:#1c1c2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}';
+        css+='.ctrl-bar{display:none!important;}';
+        document.getElementById('pageStyle').textContent=css;
+    }
+    updatePage();
+    <\/script>
+    <\/body><\/html>`);
     win.document.close();
 }
 
