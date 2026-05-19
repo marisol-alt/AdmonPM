@@ -306,8 +306,8 @@ function renderAll(){
         if(pend>0)tP++;if(tv)tVn++;if(ts)tS++;if(pend===0)tOk++;if(tsol)tSol++;
         list.appendChild(buildCard(emp,per,pend,tv,ts,tsol));
     });
-    const totalActivos=emps.filter(e=>e.est!=='Baja').length;
-    const totalBajas=emps.filter(e=>e.est==='Baja').length;
+    const totalActivos=emps.filter(e=>e.est.toLowerCase()!=='baja').length;
+    const totalBajas=emps.filter(e=>e.est.toLowerCase()==='baja').length;
     document.getElementById('sBar').innerHTML=`
         <div class="sp"><div class="sd" style="background:var(--ink)"></div><span><strong>${totalActivos}</strong> empleados activos</span></div>
         <div class="sp"><div class="sd" style="background:var(--accent)"></div><span><strong>${tP}</strong> con pendientes</span></div>
@@ -558,7 +558,7 @@ function buildReport(){
     let rows='';
     let idx=0;
 
-    emps.filter(e=>e.est!=='Baja').forEach(emp=>{
+    emps.filter(e=>e.est.toLowerCase()!=='baja').forEach(emp=>{
         const per=calcular(emp);if(!per.length)return;
         const gA=per.filter(p=>p.ev==='nv'&&p.pend>0);
         const gP=per.filter(p=>['exp','soon','fut'].includes(p.ev)&&p.pend>0);
@@ -569,7 +569,8 @@ function buildReport(){
         const dPbruto=gP.reduce((s,p)=>s+p.pend,0);
         const dSol=gP.reduce((s,p)=>s+p.detS.length,0);
         const dPneto=Math.max(0,dPbruto-dSol);
-        const totalDias=dA+dPbruto;
+        const dExp=gExp.reduce((s,p)=>s+p.pend,0);
+        const totalDias=dA+Math.max(0,dPbruto-dExp);
 
         totAD+=dA; totAP+=totA; totSol+=dSol; totPT+=dPneto; totTotal+=totalDias;
 
@@ -612,9 +613,9 @@ function buildReport(){
                 <span style="font-size:20px;font-weight:700;color:#6c3db5">${dSol}<\/span>
                 ${dSol>0?`<div style="font-size:10px;color:#6c3db5;margin-top:1px">d\u00edas<\/div>`:''}
             <\/td>
-            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0;background:rgba(26,111,181,0.05)">
-                <span style="font-size:20px;font-weight:700;color:#1a6fb5">${dPneto}<\/span>
-                ${dPneto>0?`<div style="font-size:10px;color:#1a6fb5;margin-top:1px">d\u00edas<\/div>`:''}
+            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0;background:rgba(0,180,150,0.05)">
+                <span style="font-size:20px;font-weight:700;color:#0d9e80">${dPneto}<\/span>
+                ${dPneto>0?`<div style="font-size:10px;color:#0d9e80;margin-top:1px">d\u00edas<\/div>`:''}
             <\/td>
             <td style="padding:10px 14px">${vencHTML}<\/td>
         <\/tr>`;
@@ -634,7 +635,7 @@ function buildReport(){
         <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;border-right:1px solid rgba(255,255,255,.1)">${totTotal}<\/td>
         <td style="padding:10px 8px;text-align:center;font-size:12px;font-weight:600;color:#f5c07a;border-right:1px solid rgba(255,255,255,.1)">${totAD} d\u00edas<br>${money(totAP)}<\/td>
         <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;color:#c4aaff;border-right:1px solid rgba(255,255,255,.1)">${totSol}<\/td>
-        <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;color:#7fb8f5;border-right:1px solid rgba(255,255,255,.1)">${totPT}<\/td>
+        <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;color:#5dd4b8;border-right:1px solid rgba(255,255,255,.1)">${totPT}<\/td>
         <td style="padding:10px 14px"><\/td>
     <\/tr>`;
 
@@ -656,30 +657,33 @@ function closeReport(){document.getElementById('repModal').classList.remove('ope
 function printReport(){
     const html=document.getElementById('repContent').innerHTML;
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-    const win=window.open('','_blank','width=1000,height=700');
+    const win=window.open('','_blank','width=1100,height=750');
     win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte Vacaciones<\/title>'
     +'<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">'
-    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;font-size:10px;color:#1c1c2e;padding:20px 24px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    +'.print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #1c1c2e;}'
-    +'h1{font-family:\'DM Serif Display\',serif;font-size:1.2rem;}'
-    +'.rmeta{font-size:.72rem;color:#9898b8;margin-bottom:12px;}.rmeta strong{color:#1c1c2e;}'
-    +'.rtbl{width:100%;border-collapse:collapse;font-size:.78rem;}'
-    +'.rtbl thead tr{background:#1c1c2e!important;color:#fff;}'
-    +'.rtbl thead th{padding:7px 10px;text-align:left;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;border-right:1px solid rgba(255,255,255,.1);}'
-    +'.rtbl tbody tr{border-bottom:1px solid #e2e0f0;}.rtbl tbody tr:nth-child(even){background:#faf9ff;}'
-    +'.rtbl td{padding:8px 10px;vertical-align:top;border-right:1px solid #e2e0f0;}.rtbl td:last-child{border-right:none;}'
-    +'.rtbl tfoot tr{background:#1c1c2e!important;color:#fff;}.rtbl tfoot td{padding:7px 10px;font-weight:600;font-size:.78rem;border-right:1px solid rgba(255,255,255,.1);}'
-    +'.rname{font-weight:600;font-size:.82rem;}.rsub{font-size:.65rem;color:#9898b8;margin-top:2px;}'
-    +'.pc-dias{font-size:1rem;font-weight:700;color:#b86200;}.pc-total{font-size:.85rem;font-weight:700;color:#a61c1c;}'
-    +'.pt-dias{font-size:1rem;font-weight:700;color:#1a6fb5;}.pt-sub{font-size:.65rem;color:#9898b8;margin-top:3px;}'
-    +'.vchip{display:inline-block;padding:1px 6px;border-radius:7px;font-size:.62rem;font-weight:500;margin-right:3px;}'
-    +'.vchip-e{background:#fde8e8;color:#a61c1c;}.vchip-s{background:#fdecd4;color:#b86200;}.vchip-f{background:#eef3fa;color:#1a6fb5;}'
-    +'.rtots{display:flex;border:1px solid #e2e0f0;border-radius:8px;overflow:hidden;margin-top:16px;}'
-    +'.rto{flex:1;padding:12px 10px;text-align:center;border-right:1px solid #e2e0f0;}.rto:last-child{border-right:none;}'
-    +'.rto-v{font-size:1rem;font-weight:700;}.rto-l{font-size:.6rem;color:#9898b8;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}'
-    +'.rto.acc{background:#ede9fd;}.rto.acc .rto-v{color:#6c5ce7;}.rto.red{background:#fde8e8;}.rto.red .rto-v{color:#a61c1c;}.rto.blu{background:#dceeff;}.rto.blu .rto-v{color:#1a6fb5;}'
+    +'<style>'
+    +'*{margin:0;padding:0;box-sizing:border-box;}'
+    +'@page{size:A4 landscape;margin:14mm 12mm;}'
+    +'body{font-family:\'DM Sans\',sans-serif;font-size:9.5px;color:#1c1c2e;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:16px 20px;}'
+    +'.print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #1c1c2e;}'
+    +'h1{font-family:\'DM Serif Display\',serif;font-size:1.1rem;}'
+    +'table{width:100%;border-collapse:collapse;table-layout:fixed;}'
+    +'thead tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'thead th{padding:6px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;border-right:1px solid rgba(255,255,255,.15);text-align:center;vertical-align:middle;}'
+    +'thead th:first-child{text-align:left;}'
+    +'tbody tr{border-bottom:1px solid #e2e0f0;}'
+    +'tbody tr:nth-child(even){background:#f9f8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'td{padding:6px 8px;border-right:1px solid #e2e0f0;vertical-align:middle;}'
+    +'td:last-child{border-right:none;}'
+    +'tfoot tr{background:#1c1c2e!important;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'tfoot td{padding:6px 8px;font-weight:600;font-size:9px;border-right:1px solid rgba(255,255,255,.15);}'
+    +'.border-wrap{border-radius:8px;overflow:hidden;border:1px solid #e2e0f0;}'
+    +'div[style*="border-left:3px"]{margin-top:12px;padding:8px 12px;font-size:9px;line-height:1.5;}'
+    +'@media print{.no-print{display:none!important;}}'
     +'<\/style><\/head><body>'
-    +'<div class="print-hdr"><div><h1>Reporte de Vacaciones<\/h1><small style="font-size:.78rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.<\/small><\/div><div style="font-size:.72rem;color:#9898b8;">'+today+'<\/div><\/div>'
+    +'<div class="print-hdr">'
+    +'<div><h1>Reporte de Vacaciones<\/h1><span style="font-size:.75rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.<\/span><\/div>'
+    +'<span style="font-size:.72rem;color:#9898b8;">'+today+'<\/span>'
+    +'<\/div>'
     +html
     +'<script>window.onload=function(){window.print();};<\/script><\/body><\/html>');
     win.document.close();
@@ -797,7 +801,7 @@ async function loadData(){
             num:String(r.c[0]?.v||''),nombre:r.c[1]?.v||'',
             fi:parseDate(r.c[2]?.v||r.c[2]?.f),
             sd:parseFloat(r.c[3]?.v||0),
-            eq:r.c[4]?.v||'',rol:r.c[5]?.v||'Empleado',est:r.c[6]?.v||'Activo'
+            eq:r.c[4]?.v||'',rol:r.c[5]?.v||'Empleado',est:(r.c[6]?.v||'Activo').toString().trim()
         }));
         vacs=vj.table.rows.map(r=>({
             num:String(r.c[0]?.v||''),
