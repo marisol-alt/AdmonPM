@@ -554,8 +554,9 @@ function printEmp(nombre,compact){
 
 function buildReport(){
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-    let totAD=0,totAP=0,totSol=0,totPT=0;
+    let totAD=0,totAP=0,totSol=0,totPT=0,totTotal=0;
     let rows='';
+    let idx=0;
 
     emps.filter(e=>e.est!=='Baja').forEach(emp=>{
         const per=calcular(emp);if(!per.length)return;
@@ -565,92 +566,87 @@ function buildReport(){
 
         const dA=gA.reduce((s,p)=>s+p.pend,0);
         const vdA=dA*emp.sd,prA=vdA*.25,totA=vdA+prA;
-
         const dPbruto=gP.reduce((s,p)=>s+p.pend,0);
         const dSol=gP.reduce((s,p)=>s+p.detS.length,0);
         const dPneto=Math.max(0,dPbruto-dSol);
-        const dExp=gExp.reduce((s,p)=>s+p.pend,0);
-
         const totalDias=dA+dPbruto;
 
-        totAD+=dA; totAP+=totA; totSol+=dSol; totPT+=dPneto;
+        totAD+=dA; totAP+=totA; totSol+=dSol; totPT+=dPneto; totTotal+=totalDias;
 
-        // Build vencimiento column
-        const hoyMs=new Date().getTime();
         const periodosFuturos=gP.filter(p=>p.ev!=='exp'&&p.venc&&p.pend>0).sort((a,b)=>a.venc-b.venc);
         const periodosVencidos=gP.filter(p=>p.ev==='exp'&&p.pend>0);
 
         let vencHTML='';
-        if(periodosFuturos.length>0){
-            periodosFuturos.forEach(p=>{
-                const neto=Math.max(0,p.pend-p.detS.length);
-                if(neto===0&&p.detS.length===0)return;
-                vencHTML+=`<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,111,181,0.1);padding:3px 9px;border-radius:6px;font-size:11.5px;color:#1a6fb5;font-weight:500;margin-bottom:3px">`
-                    +`<i class="ti ti-calendar" aria-hidden="true"><\/i> ${neto} d\u00eda${neto!==1?'s':''} \u00b7 vence ${fmt(p.venc)}<\/div>`
-                    +`<div style="font-size:10.5px;color:var(--color-text-secondary);margin-bottom:${periodosVencidos.length>0?'5':'0'}px">`
-                    +`A\u00f1o ${p.anio} \u00b7 ${p.pend} d\u00edas`+(p.detS.length>0?` \u2212 ${p.detS.length} solicitados \u00b7 ${neto} por tomar`:` por tomar`)
-                    +`<\/div>`;
-            });
-        }
-        if(periodosVencidos.length>0){
-            periodosVencidos.forEach(p=>{
-                vencHTML+=`<div style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:#a61c1c;margin-top:1px">`
-                    +`<i class="ti ti-alert-triangle" style="font-size:11px" aria-hidden="true"><\/i> `
-                    +`${p.pend} d\u00eda${p.pend!==1?'s':''} del a\u00f1o ${p.anio} ya venci\u00f3${p.pend!==1?'ron':''} (${fmt(p.venc)})<\/div>`;
-            });
-        }
-        if(!vencHTML) vencHTML=`<span style="font-size:11.5px;color:var(--color-text-secondary)">Sin vencimientos pr\u00f3ximos<\/span>`;
+        periodosFuturos.forEach(p=>{
+            const neto=Math.max(0,p.pend-p.detS.length);
+            vencHTML+=`<div style="display:inline-flex;align-items:center;gap:5px;background:#1c1c2e;padding:3px 10px;border-radius:5px;font-size:11.5px;color:#fff;font-weight:500;margin-bottom:3px;white-space:nowrap">`
+                +`<i class="ti ti-calendar" aria-hidden="true"><\/i> ${neto} d\u00eda${neto!==1?'s':''} \u00b7 vence ${fmt(p.venc)}<\/div>`
+                +`<div style="font-size:10.5px;color:#52526e;margin-bottom:4px">`
+                +`A\u00f1o ${p.anio} \u00b7 ${p.pend} d\u00edas`+(p.detS.length>0?` \u2212 ${p.detS.length} solicitados \u00b7 ${neto} por tomar`:` por tomar`)
+                +`<\/div>`;
+        });
+        periodosVencidos.forEach(p=>{
+            vencHTML+=`<div style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:#a61c1c">`
+                +`<i class="ti ti-alert-triangle" style="font-size:11px" aria-hidden="true"><\/i>`
+                +`${p.pend} d\u00eda${p.pend!==1?'s':''} del a\u00f1o ${p.anio} ya venci\u00f3${p.pend!==1?'ron':''} (${fmt(p.venc)})<\/div>`;
+        });
+        if(!vencHTML) vencHTML=`<span style="font-size:11px;color:#9898b8">\u2014<\/span>`;
 
-        const rowBg=rows.split('<tr').length%2===0?'background:var(--color-background-secondary)':'';
+        const rowBg=idx%2===0?'#ffffff':'#f9f8ff';
+        idx++;
 
-        rows+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);${rowBg}">
-            <td style="padding:9px 12px">
-                <div style="font-weight:500;font-size:13px">${emp.nombre}<\/div>
-                <div style="font-size:11px;color:var(--color-text-secondary)">#${emp.num} \u00b7 ${emp.eq||'\u2014'} \u00b7 ${per.length} a\u00f1os<\/div>
+        rows+=`<tr style="border-bottom:1px solid #e2e0f0;background:${rowBg}">
+            <td style="padding:10px 14px;border-right:1px solid #e2e0f0">
+                <div style="font-weight:600;font-size:13px;color:#1c1c2e">${emp.nombre}<\/div>
+                <div style="font-size:11px;color:#9898b8;margin-top:2px">#${emp.num} \u00b7 ${emp.eq||'\u2014'} \u00b7 ${per.length} a\u00f1os<\/div>
             <\/td>
-            <td style="padding:9px 8px;text-align:center">
-                <span style="font-size:18px;font-weight:500;color:var(--color-text-primary)">${totalDias}<\/span>
+            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0">
+                <span style="font-size:20px;font-weight:700;color:#1c1c2e">${totalDias}<\/span>
             <\/td>
-            <td style="padding:9px 8px;text-align:center;background:rgba(184,98,0,0.06)">
+            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0;background:rgba(184,98,0,0.05)">
                 ${dA>0
-                    ?`<span style="font-size:14px;font-weight:500;color:#b86200">${dA} d\u00edas<\/span><div style="font-size:12px;font-weight:500;color:#a61c1c;margin-top:2px">${money(totA)}<\/div>`
-                    :`<span style="color:var(--color-text-secondary);">\u2014<\/span>`}
+                    ?`<div style="font-size:15px;font-weight:700;color:#b86200">${dA} d\u00edas<\/div><div style="font-size:12.5px;font-weight:600;color:#a61c1c;margin-top:2px">${money(totA)}<\/div>`
+                    :`<span style="color:#ccc;font-size:16px">\u2014<\/span>`}
             <\/td>
-            <td style="padding:9px 8px;text-align:center;background:rgba(108,61,181,0.06)">
-                <span style="font-size:18px;font-weight:500;color:#6c3db5">${dSol}<\/span>
-                ${dSol>0?`<div style="font-size:11px;color:#6c3db5;margin-top:1px">d\u00edas<\/div>`:''}
+            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0;background:rgba(108,61,181,0.05)">
+                <span style="font-size:20px;font-weight:700;color:#6c3db5">${dSol}<\/span>
+                ${dSol>0?`<div style="font-size:10px;color:#6c3db5;margin-top:1px">d\u00edas<\/div>`:''}
             <\/td>
-            <td style="padding:9px 8px;text-align:center;background:rgba(26,111,181,0.06)">
-                <span style="font-size:18px;font-weight:500;color:#1a6fb5">${dPneto}<\/span>
-                ${dPneto>0?`<div style="font-size:11px;color:#1a6fb5;margin-top:1px">d\u00edas<\/div>`:''}
+            <td style="padding:10px 8px;text-align:center;border-right:1px solid #e2e0f0;background:rgba(26,111,181,0.05)">
+                <span style="font-size:20px;font-weight:700;color:#1a6fb5">${dPneto}<\/span>
+                ${dPneto>0?`<div style="font-size:10px;color:#1a6fb5;margin-top:1px">d\u00edas<\/div>`:''}
             <\/td>
-            <td style="padding:9px 12px;background:rgba(26,111,181,0.02)">${vencHTML}<\/td>
+            <td style="padding:10px 14px">${vencHTML}<\/td>
         <\/tr>`;
     });
 
-    return `<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">Generado el <strong style="color:var(--color-text-primary)">${today}<\/strong> \u00b7 Paz Mental S.A.P.I. de C.V.<\/div>
-    <div style="overflow-x:auto">
-    <table style="width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed">
-        <thead><tr style="background:var(--color-background-secondary)">
-            <th style="padding:9px 12px;text-align:left;border-bottom:1.5px solid var(--color-border-secondary);width:19%;color:var(--color-text-secondary);font-weight:500">Empleado<\/th>
-            <th style="padding:9px 8px;text-align:center;border-bottom:1.5px solid var(--color-border-secondary);width:9%;color:var(--color-text-secondary);font-weight:500">Total d\u00edas<br>pendientes<\/th>
-            <th style="padding:9px 8px;text-align:center;border-bottom:1.5px solid var(--color-border-secondary);width:15%;color:#b86200;font-weight:500">Adeudo sin vencimiento<br><span style="font-size:10px;font-weight:400">d\u00edas \u00b7 pasivo total<\/span><\/th>
-            <th style="padding:9px 8px;text-align:center;border-bottom:1.5px solid var(--color-border-secondary);width:11%;color:#6c3db5;font-weight:500">Ya solicitados<br><span style="font-size:10px;font-weight:400">pendientes de tomar<\/span><\/th>
-            <th style="padding:9px 8px;text-align:center;border-bottom:1.5px solid var(--color-border-secondary);width:11%;color:#1a6fb5;font-weight:500">Por tomar<br><span style="font-size:10px;font-weight:400">a\u00fan no solicitados<\/span><\/th>
-            <th style="padding:9px 12px;text-align:left;border-bottom:1.5px solid var(--color-border-secondary);width:35%;color:#1a6fb5;font-weight:500">Vencimiento<br><span style="font-size:10px;font-weight:400;color:#1a6fb5">fecha l\u00edmite para ejercerlos<\/span><\/th>
-        <\/tr><\/thead>
+    const thead=`<tr style="background:#1c1c2e;color:#fff">
+        <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);width:19%">Empleado<\/th>
+        <th style="padding:10px 8px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);width:9%">Total d\u00edas<br>pendientes<\/th>
+        <th style="padding:10px 8px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);width:15%;color:#f5c07a">Adeudo sin<br>vencimiento<br><span style="font-size:9px;font-weight:400;opacity:.8">d\u00edas \u00b7 pasivo total<\/span><\/th>
+        <th style="padding:10px 8px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);width:11%;color:#c4aaff">Ya solicitados<br><span style="font-size:9px;font-weight:400;opacity:.8">pendientes de tomar<\/span><\/th>
+        <th style="padding:10px 8px;text-align:center;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.1);width:11%;color:#7fb8f5">Por tomar<br><span style="font-size:9px;font-weight:400;opacity:.8">a\u00fan no solicitados<\/span><\/th>
+        <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;width:35%;color:#7fb8f5">Vencimiento<br><span style="font-size:9px;font-weight:400;opacity:.8">fecha l\u00edmite para ejercerlos<\/span><\/th>
+    <\/tr>`;
+
+    const tfoot=`<tr style="background:#1c1c2e;color:#fff;border-top:2px solid #1c1c2e">
+        <td style="padding:10px 14px;font-weight:600;font-size:12px;border-right:1px solid rgba(255,255,255,.1)">TOTALES<\/td>
+        <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;border-right:1px solid rgba(255,255,255,.1)">${totTotal}<\/td>
+        <td style="padding:10px 8px;text-align:center;font-size:12px;font-weight:600;color:#f5c07a;border-right:1px solid rgba(255,255,255,.1)">${totAD} d\u00edas<br>${money(totAP)}<\/td>
+        <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;color:#c4aaff;border-right:1px solid rgba(255,255,255,.1)">${totSol}<\/td>
+        <td style="padding:10px 8px;text-align:center;font-size:16px;font-weight:700;color:#7fb8f5;border-right:1px solid rgba(255,255,255,.1)">${totPT}<\/td>
+        <td style="padding:10px 14px"><\/td>
+    <\/tr>`;
+
+    return `<div style="font-size:12px;color:#52526e;margin-bottom:16px;font-family:'DM Sans',sans-serif">Generado el <strong style="color:#1c1c2e">${today}<\/strong> \u00b7 Paz Mental S.A.P.I. de C.V.<\/div>
+    <div style="overflow-x:auto;border-radius:10px;overflow:hidden;border:1px solid #e2e0f0;box-shadow:0 2px 12px rgba(28,28,46,.08)">
+    <table style="width:100%;border-collapse:collapse;font-family:'DM Sans',sans-serif;table-layout:fixed">
+        <thead>${thead}<\/thead>
         <tbody>${rows}<\/tbody>
-        <tfoot><tr style="border-top:1.5px solid var(--color-border-secondary)">
-            <td style="padding:8px 12px;font-weight:500;font-size:12px">Totales<\/td>
-            <td style="padding:8px 8px;text-align:center;font-weight:500;font-size:14px">${totAD+totSol+totPT}<\/td>
-            <td style="padding:8px 8px;text-align:center;font-size:12px;color:#a61c1c;font-weight:500">${totAD} d\u00edas \u00b7 ${money(totAP)}<\/td>
-            <td style="padding:8px 8px;text-align:center;font-size:14px;font-weight:500;color:#6c3db5">${totSol}<\/td>
-            <td style="padding:8px 8px;text-align:center;font-size:14px;font-weight:500;color:#1a6fb5">${totPT}<\/td>
-            <td style="padding:8px 12px"><\/td>
-        <\/tr><\/tfoot>
+        <tfoot>${tfoot}<\/tfoot>
     <\/table>
     <\/div>
-    <div style="margin-top:14px;padding:10px 14px;border-left:3px solid rgba(184,98,0,0.4);border-radius:0 6px 6px 0;background:rgba(184,98,0,0.04);font-size:11.5px;color:var(--color-text-secondary);line-height:1.6">
+    <div style="margin-top:14px;padding:10px 14px;border-left:3px solid rgba(184,98,0,0.5);border-radius:0 6px 6px 0;background:rgba(184,98,0,0.04);font-size:11.5px;color:#52526e;line-height:1.6;font-family:'DM Sans',sans-serif">
         <strong style="color:#b86200">Nota \u2014 Adeudo sin vencimiento:<\/strong> Corresponde a d\u00edas acumulados antes de la aplicaci\u00f3n de la pol\u00edtica de vencimiento vacacional. Estos d\u00edas no caducan y representan un pasivo para la empresa: pueden liquidarse al colaborador o programarse para su disfrute.
     <\/div>`;
 }
