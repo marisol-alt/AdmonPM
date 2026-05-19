@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacaciones · Paz Mental</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1a1a2e;
+            --ink-soft: #4a4a6a;
+            --ink-muted: #9090b0;
+            --cream: #faf9f6;
+            --white: #ffffff;
+            --accent: #c17c3a;
+            --accent-light: #f5e6d3;
+            --ok: #2d7a4f;
+            --ok-light: #d4f0e0;
+            --warn: #b85c00;
+            --warn-light: #fde8d0;
+            --danger: #b81c1c;
+            --danger-light: #fde0e0;
+            --border: #e8e6e0;
+            --shadow: 0 2px 16px rgba(26,26,46,0.08);
+            --shadow-lg: 0 8px 40px rgba(26,26,46,0.14);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        .site-header {
+            background: var(--ink);
+            color: var(--white);
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+        }
+
+        .site-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.01em;
+        }
+
+        .site-header span {
+            font-size: 0.8rem;
+            color: var(--ink-muted);
+            font-weight: 300;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* ── LOADING ── */
+        #loadingScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            gap: 16px;
+            color: var(--ink-soft);
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── SUMMARY BAR ── */
+        .summary-bar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .summary-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .summary-pill strong {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .pill-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* ── SEARCH / FILTER ── */
+        .controls {
+            padding: 20px 40px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 10px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--white);
+            color: var(--ink);
+            width: 260px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filter-btn {
+            padding: 9px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--white);
+            color: var(--ink-soft);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--ink);
+            color: var(--white);
+            border-color: var(--ink);
+        }
+
+        /* ── EMPLOYEES GRID ── */
+        .employees-list {
+            padding: 0 40px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ── EMPLOYEE CARD ── */
+        .emp-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s;
+        }
+
+        .emp-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .emp-card.has-expired {
+            border-left: 4px solid var(--danger);
+        }
+
+        .emp-card.has-expiring-soon {
+            border-left: 4px solid var(--warn);
+        }
+
+        /* ── CARD HEADER ── */
+        .card-header {
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            gap: 12px;
+        }
+
+        .card-header:hover {
+            background: #fafafa;
+        }
+
+        .emp-name-block {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+
+        .emp-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--ink);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .emp-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .emp-meta {
+            font-size: 0.78rem;
+            color: var(--ink-muted);
+            margin-top: 2px;
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .badge-expired {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .badge-warn {
+            background: var(--warn-light);
+            color: var(--warn);
+        }
+
+        .badge-ok {
+            background: var(--ok-light);
+            color: var(--ok);
+        }
+
+        .card-toggle {
+            color: var(--ink-muted);
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .card-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        /* ── CARD BODY ── */
+        .card-body {
+            display: none;
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-body.open {
+            display: block;
+        }
+
+        /* emp info strip */
+        .emp-info-strip {
+            display: flex;
+            gap: 32px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+            margin-bottom: 3px;
+        }
+
+        .info-item span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* ── YEAR ROWS ── */
+        .years-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.88rem;
+        }
+
+        .years-table th {
+            text-align: left;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--ink-muted);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .years-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0eeea;
+            vertical-align: middle;
+        }
+
+        .years-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .year-num {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .date-range {
+            font-size: 0.78rem;
+            color: var(--ink-muted);
+            margin-top: 2px;
+        }
+
+        .days-bar-wrap {
+            width: 120px;
+        }
+
+        .days-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .days-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--ok);
+        }
+
+        .days-bar-fill.partial {
+            background: var(--accent);
+        }
+
+        .days-bar-fill.zero {
+            background: var(--border);
+        }
+
+        .status-text {
+            font-size: 0.78rem;
+            margin-top: 2px;
+            color: var(--ink-muted);
+        }
+
+        .vence-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .vence-chip.expired {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .vence-chip.soon {
+            background: var(--warn-light);
+            color: var(--warn);
+        }
+
+        .vence-chip.future {
+            background: #f0f0f8;
+            color: var(--ink-soft);
+        }
+
+        .vence-chip.done {
+            background: var(--ok-light);
+            color: var(--ok);
+        }
+
+        /* dates detail */
+        .dates-detail {
+            font-size: 0.78rem;
+            color: var(--ink-soft);
+        }
+
+        .dates-detail span {
+            display: inline-block;
+            background: var(--ok-light);
+            color: var(--ok);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin: 2px 3px 2px 0;
+        }
+
+        /* money row */
+        .money-row-table {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .money-item {
+            text-align: center;
+        }
+
+        .money-item .amount {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .money-item .label {
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ── TOTAL ROW ── */
+        .total-row {
+            background: #f5f4f0;
+            border-top: 2px solid var(--border);
+        }
+
+        .total-row td {
+            font-weight: 600;
+            border-bottom: none !important;
+        }
+
+        /* ── PRINT BUTTON ── */
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 9px 18px;
+            background: var(--ink);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .print-btn:hover {
+            background: #2d2d50;
+        }
+
+        /* ── ERROR ── */
+        .error-msg {
+            margin: 40px;
+            padding: 20px 24px;
+            background: var(--danger-light);
+            color: var(--danger);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            body { background: white; }
+            .site-header, .summary-bar, .controls, .print-btn, .card-toggle { display: none !important; }
+            .employees-list { padding: 0; }
+            .emp-card { display: none !important; box-shadow: none; border: 1px solid #ccc; }
+            .emp-card.printing { display: block !important; page-break-after: always; }
+            .card-body { display: block !important; }
+            .card-header { cursor: default; }
+        }
+
+        @media (max-width: 700px) {
+            .site-header { padding: 14px 20px; }
+            .summary-bar { padding: 14px 20px; gap: 16px; }
+            .controls { padding: 14px 20px; }
+            .employees-list { padding: 0 20px 40px; }
+            .card-header { padding: 14px 16px; }
+            .card-body { padding: 0 16px 16px; }
+            .emp-info-strip { gap: 16px; }
+            .days-bar-wrap { width: 80px; }
+            .years-table th:nth-child(4),
+            .years-table td:nth-child(4) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div>
+        <h1>🏖️ Control de Vacaciones</h1>
+        <span>Paz Mental S.A.P.I. de C.V.</span>
+    </div>
+    <div class="header-meta" id="lastUpdate"></div>
+</header>
+
+<div id="loadingScreen">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
+</div>
+
+<div id="appContent" style="display:none">
+    <div class="summary-bar" id="summaryBar"></div>
+    <div class="controls">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar empleado..." oninput="filterCards()">
+        <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('pendientes', this)">Con pendientes</button>
+        <button class="filter-btn" onclick="setFilter('vencidos', this)">Vencidos ⚠️</button>
+        <button class="filter-btn" onclick="setFilter('proximos', this)">Próximos 30 días</button>
+    </div>
+    <div class="employees-list" id="employeesList"></div>
+</div>
+
+<script>
+const SHEET_ID = '1LspktCHoVlK4QDGY6-gB162B5Y2BBJxS6IlCBPiClv8';
+let empleadosData = [];
+let vacacionesData = [];
+let currentFilter = 'todos';
+
+// ── TABLAS ──
+const tablaVieja = { 1:6,2:8,3:10,4:12,5:14,6:14,7:14,8:14,9:14,10:16,11:16,12:16,13:16,14:16,15:18 };
+const tablaNueva = { 1:12,2:14,3:16,4:18,5:20,6:22,7:22,8:22,9:22,10:22,11:24,12:24,13:24,14:24,15:24 };
+const corte2023 = new Date(2023, 0, 1);
+
+// ── HELPERS ──
+function parseDate(v) {
+    if (!v) return null;
+    const s = v.toString();
+    // Date(y,m,d) from gviz
+    const m = s.match(/Date\((\d+),(\d+),(\d+)\)/);
+    if (m) return new Date(+m[1], +m[2], +m[3]);
+    // DD-MM-YY or DD-MM-YYYY
+    if (s.includes('-')) {
+        const p = s.split('-');
+        if (p.length === 3) {
+            let [d,mo,y] = p.map(Number);
+            if (y < 100) y += 2000;
+            return new Date(y, mo-1, d);
+        }
+    }
+    const dt = new Date(v);
+    return isNaN(dt) ? null : dt;
+}
+
+function fmt(date, opts) {
+    if (!date) return '—';
+    return date.toLocaleDateString('es-MX', opts || { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function fmtLong(date) {
+    if (!date) return '—';
+    return date.toLocaleDateString('es-MX', { day:'2-digit', month:'long', year:'numeric' });
+}
+
+function initials(name) {
+    return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function getDiasCorresponden(fechaIngreso, anio) {
+    // El aniversario que ABRE este periodo es ingreso + anio años
+    const fechaApertura = new Date(fechaIngreso);
+    fechaApertura.setFullYear(fechaIngreso.getFullYear() + anio);
+    const tabla = fechaApertura < corte2023 ? tablaVieja : tablaNueva;
+    return tabla[Math.min(anio, 15)] || (fechaApertura < corte2023 ? 18 : 24);
+}
+
+// ── CÁLCULO PRINCIPAL ──
+function calcularVacaciones(empleado) {
+    const hoy = new Date();
+    const ing = empleado.fechaIngreso;
+    if (!ing) return [];
+
+    // Cuántos aniversarios ya pasaron = cuántos periodos ya se abrieron
+    let periodosAbiertos = 0;
+    for (let a = 1; a <= 50; a++) {
+        const apertura = new Date(ing);
+        apertura.setFullYear(ing.getFullYear() + a);
+        if (apertura <= hoy) periodosAbiertos = a;
+        else break;
+    }
+
+    const resultado = [];
+
+    for (let anio = 1; anio <= periodosAbiertos; anio++) {
+        // Fecha de apertura del periodo
+        const apertura = new Date(ing);
+        apertura.setFullYear(ing.getFullYear() + anio);
+
+        // Fecha de cierre = un día antes del siguiente aniversario
+        const cierre = new Date(ing);
+        cierre.setFullYear(ing.getFullYear() + anio + 1);
+        cierre.setDate(cierre.getDate() - 1);
+
+        const diasCorresponden = getDiasCorresponden(ing, anio);
+
+        // Vacaciones registradas para este periodo
+        const vacsAnio = vacacionesData.filter(v =>
+            v.numeroEmpleado === empleado.numero && v.anio === anio
+        );
+
+        let diasDisfrutados = 0, diasPagados = 0, diasSinFecha = 0;
+        const detalles = [];
+
+        const hayPagadas = vacsAnio.some(v => v.status === 'Pagadas');
+        const haySinFecha = vacsAnio.some(v => v.status === 'Disfrutadas sin fecha');
+
+        if (hayPagadas) {
+            diasPagados = diasCorresponden;
+        } else if (haySinFecha) {
+            diasSinFecha = diasCorresponden;
+        } else {
+            vacsAnio.forEach(vac => {
+                if (vac.fecha) {
+                    diasDisfrutados++;
+                    detalles.push(vac.fecha);
+                }
+            });
+        }
+
+        const diasUsados = diasDisfrutados + diasPagados + diasSinFecha;
+        const diasPendientes = Math.max(0, diasCorresponden - diasUsados);
+
+        // Vencimiento: solo si apertura >= 2025
+        let vencimiento = null;
+        let diasParaVencer = null;
+        let estadoVenc = 'done'; // done | future | soon | expired
+
+        if (apertura.getFullYear() >= 2025 && diasPendientes > 0) {
+            vencimiento = cierre;
+            diasParaVencer = Math.ceil((cierre - hoy) / 86400000);
+            if (diasParaVencer < 0) estadoVenc = 'expired';
+            else if (diasParaVencer <= 30) estadoVenc = 'soon';
+            else estadoVenc = 'future';
+        } else if (diasPendientes === 0) {
+            estadoVenc = 'done';
+        } else {
+            estadoVenc = 'no-vence'; // anteriores a 2025 no vencen
+        }
+
+        resultado.push({
+            anio, apertura, cierre,
+            diasCorresponden, diasDisfrutados, diasPagados, diasSinFecha,
+            diasPendientes, detalles,
+            vencimiento, diasParaVencer, estadoVenc,
+            hayPagadas, haySinFecha
+        });
+    }
+
+    return resultado;
+}
+
+// ── RENDER ──
+function renderAll() {
+    const lista = document.getElementById('employeesList');
+    lista.innerHTML = '';
+
+    let totalPendientes = 0, totalVencidos = 0, totalProximos = 0, totalSinPendientes = 0;
+
+    empleadosData.forEach(emp => {
+        const periodos = calcularVacaciones(emp);
+        const pendTotal = periodos.reduce((s, p) => s + p.diasPendientes, 0);
+        const tieneVencidos = periodos.some(p => p.estadoVenc === 'expired' && p.diasPendientes > 0);
+        const tieneProximos = periodos.some(p => p.estadoVenc === 'soon' && p.diasPendientes > 0);
+
+        if (pendTotal > 0) totalPendientes++;
+        if (tieneVencidos) totalVencidos++;
+        if (tieneProximos) totalProximos++;
+        if (pendTotal === 0) totalSinPendientes++;
+
+        const card = buildCard(emp, periodos, pendTotal, tieneVencidos, tieneProximos);
+        lista.appendChild(card);
+    });
+
+    // Summary
+    document.getElementById('summaryBar').innerHTML = `
+        <div class="summary-pill">
+            <div class="pill-dot" style="background:var(--ink)"></div>
+            <span><strong>${empleadosData.length}</strong> empleados</span>
+        </div>
+        <div class="summary-pill">
+            <div class="pill-dot" style="background:var(--accent)"></div>
+            <span><strong>${totalPendientes}</strong> con días pendientes</span>
+        </div>
+        <div class="summary-pill">
+            <div class="pill-dot" style="background:var(--danger)"></div>
+            <span><strong>${totalVencidos}</strong> con días vencidos</span>
+        </div>
+        <div class="summary-pill">
+            <div class="pill-dot" style="background:var(--warn)"></div>
+            <span><strong>${totalProximos}</strong> vencen pronto</span>
+        </div>
+        <div class="summary-pill">
+            <div class="pill-dot" style="background:var(--ok)"></div>
+            <span><strong>${totalSinPendientes}</strong> al corriente</span>
+        </div>
+    `;
+
+    document.getElementById('lastUpdate').textContent = `Actualizado: ${new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'})}`;
+}
+
+function buildCard(emp, periodos, pendTotal, tieneVencidos, tieneProximos) {
+    const card = document.createElement('div');
+    card.className = 'emp-card' +
+        (tieneVencidos ? ' has-expired' : tieneProximos ? ' has-expiring-soon' : '');
+    card.dataset.nombre = emp.nombre.toLowerCase();
+    card.dataset.filter = tieneVencidos ? 'vencidos' : tieneProximos ? 'proximos' : pendTotal > 0 ? 'pendientes' : 'ok';
+
+    // Antigüedad real = periodos abiertos
+    const aniosReal = periodos.length;
+    const ing = emp.fechaIngreso;
+    const ingStr = fmtLong(ing);
+
+    // Badges
+    let badgesHtml = '';
+    if (pendTotal > 0) badgesHtml += `<span class="badge badge-pending">${pendTotal} días pendientes</span>`;
+    if (tieneVencidos) badgesHtml += `<span class="badge badge-expired">⚠ Vencidos</span>`;
+    else if (tieneProximos) badgesHtml += `<span class="badge badge-warn">⏰ Vence pronto</span>`;
+    if (pendTotal === 0) badgesHtml += `<span class="badge badge-ok">✓ Al corriente</span>`;
+
+    // Tabla de periodos
+    let tableRows = '';
+    let totalDias = 0, totalUsados = 0, totalPend = 0;
+
+    periodos.forEach(p => {
+        totalDias += p.diasCorresponden;
+        totalUsados += (p.diasDisfrutados + p.diasPagados + p.diasSinFecha);
+        totalPend += p.diasPendientes;
+
+        const pct = p.diasCorresponden > 0
+            ? Math.round(((p.diasDisfrutados + p.diasPagados + p.diasSinFecha) / p.diasCorresponden) * 100)
+            : 100;
+        const barClass = pct === 100 ? 'zero' : pct > 0 ? 'partial' : '';
+
+        // Status usado
+        let usadoTxt = '';
+        if (p.hayPagadas) usadoTxt = `<span style="color:var(--ok-soft)">Pagados</span>`;
+        else if (p.haySinFecha) usadoTxt = `Sin fecha`;
+        else if (p.detalles.length > 0) {
+            usadoTxt = `<div class="dates-detail">${p.detalles.map(d=>`<span>${fmt(d)}</span>`).join('')}</div>`;
+        } else {
+            usadoTxt = `<span style="color:var(--ink-muted)">—</span>`;
+        }
+
+        // Vencimiento chip
+        let vencChip = '';
+        if (p.diasPendientes === 0) {
+            vencChip = `<span class="vence-chip done">✓ Completo</span>`;
+        } else if (p.estadoVenc === 'no-vence') {
+            vencChip = `<span class="vence-chip future">Sin vencimiento</span>`;
+        } else if (p.estadoVenc === 'expired') {
+            vencChip = `<span class="vence-chip expired">⚠ Venció ${fmtLong(p.vencimiento)}</span>`;
+        } else if (p.estadoVenc === 'soon') {
+            vencChip = `<span class="vence-chip soon">⏰ Vence en ${p.diasParaVencer} días<br><small>${fmtLong(p.vencimiento)}</small></span>`;
+        } else if (p.estadoVenc === 'future') {
+            vencChip = `<span class="vence-chip future">Vence ${fmtLong(p.vencimiento)}</span>`;
+        }
+
+        // Row color
+        const rowStyle = p.estadoVenc === 'expired' && p.diasPendientes > 0
+            ? 'background:#fff5f5;'
+            : p.estadoVenc === 'soon' && p.diasPendientes > 0
+            ? 'background:#fffbf0;'
+            : '';
+
+        tableRows += `
+        <tr style="${rowStyle}">
+            <td>
+                <div class="year-num">Año ${p.anio}</div>
+                <div class="date-range">${fmt(p.apertura)} → ${fmt(p.cierre)}</div>
+            </td>
+            <td style="text-align:center">${p.diasCorresponden}</td>
+            <td>
+                <div class="days-bar-wrap">
+                    <div style="font-size:0.82rem">${p.diasDisfrutados+p.diasPagados+p.diasSinFecha} / ${p.diasCorresponden}</div>
+                    <div class="days-bar"><div class="days-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+                    <div class="status-text">${usadoTxt}</div>
+                </div>
+            </td>
+            <td style="text-align:center; font-weight:600; color:${p.diasPendientes > 0 ? 'var(--accent)' : 'var(--ok)'}">
+                ${p.diasPendientes}
+            </td>
+            <td>${vencChip}</td>
+        </tr>`;
+    });
+
+    // Money summary
+    const valorDias = pendTotal * emp.salarioDiario;
+    const prima = valorDias * 0.25;
+    const totalMoney = valorDias + prima;
+
+    card.innerHTML = `
+        <div class="card-header" onclick="toggleCard(this)">
+            <div class="emp-name-block">
+                <div class="emp-avatar">${initials(emp.nombre)}</div>
+                <div>
+                    <div class="emp-name">${emp.nombre}</div>
+                    <div class="emp-meta">#${emp.numero} · ${emp.equipo || 'Sin equipo'} · Año ${aniosReal} de antigüedad</div>
+                </div>
+            </div>
+            <div class="card-badges">${badgesHtml}</div>
+            <span class="card-toggle">▼</span>
+        </div>
+        <div class="card-body">
+            <div class="emp-info-strip">
+                <div class="info-item">
+                    <label>Ingreso</label>
+                    <span>${ingStr}</span>
+                </div>
+                <div class="info-item">
+                    <label>Año actual</label>
+                    <span>Año ${aniosReal}</span>
+                </div>
+                <div class="info-item">
+                    <label>Días pendientes</label>
+                    <span style="color:var(--accent); font-size:1.1rem">${pendTotal}</span>
+                </div>
+                <div class="info-item">
+                    <label>Valor días</label>
+                    <span>$${valorDias.toLocaleString('es-MX',{minimumFractionDigits:2})}</span>
+                </div>
+                <div class="info-item">
+                    <label>Prima (25%)</label>
+                    <span>$${prima.toLocaleString('es-MX',{minimumFractionDigits:2})}</span>
+                </div>
+                <div class="info-item">
+                    <label>Total pasivo</label>
+                    <span style="font-size:1.05rem; color:var(--ink)">$${totalMoney.toLocaleString('es-MX',{minimumFractionDigits:2})}</span>
+                </div>
+                <div class="info-item">
+                    <label>Salario diario</label>
+                    <span>$${emp.salarioDiario.toLocaleString('es-MX',{minimumFractionDigits:2})}</span>
+                </div>
+            </div>
+
+            <table class="years-table">
+                <thead>
+                    <tr>
+                        <th>Periodo</th>
+                        <th style="text-align:center">Días que le tocan</th>
+                        <th>Usados / Detalle</th>
+                        <th style="text-align:center">Pendientes</th>
+                        <th>Vencimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td>TOTAL</td>
+                        <td style="text-align:center">${totalDias}</td>
+                        <td>${totalUsados} usados</td>
+                        <td style="text-align:center; color:var(--accent)">${totalPend}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <button class="print-btn" onclick="imprimirEmpleado('${emp.numero}', '${emp.nombre.replace(/'/g,"\\'")}')">
+                🖨 Imprimir / Exportar PDF
+            </button>
+        </div>
+    `;
+
+    return card;
+}
+
+// ── TOGGLE ──
+function toggleCard(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.card-toggle');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+}
+
+// ── FILTER ──
+function setFilter(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterCards();
+}
+
+function filterCards() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.emp-card').forEach(card => {
+        const matchName = card.dataset.nombre.includes(q);
+        const matchFilter = currentFilter === 'todos'
+            || (currentFilter === 'pendientes' && card.dataset.filter !== 'ok')
+            || (currentFilter === 'vencidos' && card.dataset.filter === 'vencidos')
+            || (currentFilter === 'proximos' && card.dataset.filter === 'proximos');
+        card.style.display = matchName && matchFilter ? '' : 'none';
+    });
+}
+
+// ── PRINT ──
+function imprimirEmpleado(numero, nombre) {
+    // Mark only this card for printing
+    document.querySelectorAll('.emp-card').forEach(c => c.classList.remove('printing'));
+    const target = [...document.querySelectorAll('.emp-card')]
+        .find(c => c.dataset.nombre === nombre.toLowerCase());
+    if (target) {
+        target.classList.add('printing');
+        // Open body of card for print
+        target.querySelector('.card-body').classList.add('open');
+    }
+    window.print();
+    // Cleanup after print
+    setTimeout(() => {
+        document.querySelectorAll('.emp-card').forEach(c => c.classList.remove('printing'));
+    }, 1000);
+}
+
+// ── LOAD DATA ──
+async function loadData() {
+    try {
+        const [empResp, vacResp] = await Promise.all([
+            fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Empleados`),
+            fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Vacaciones_Tomadas`)
+        ]);
+
+        const empText = await empResp.text();
+        const vacText = await vacResp.text();
+
+        const empJson = JSON.parse(empText.substring(47).slice(0, -2));
+        const vacJson = JSON.parse(vacText.substring(47).slice(0, -2));
+
+        empleadosData = empJson.table.rows.map(row => ({
+            numero: String(row.c[0]?.v || ''),
+            nombre: row.c[1]?.v || '',
+            fechaIngreso: parseDate(row.c[2]?.f || row.c[2]?.v),
+            salarioDiario: parseFloat(row.c[3]?.v || 0),
+            equipo: row.c[4]?.v || '',
+            rol: row.c[5]?.v || 'Empleado'
+        }));
+
+        vacacionesData = vacJson.table.rows.map(row => ({
+            numeroEmpleado: String(row.c[0]?.v || ''),
+            fecha: parseDate(row.c[1]?.f || row.c[1]?.v),
+            anio: parseInt(row.c[2]?.v || 0),
+            status: row.c[3]?.v || 'Disfrutadas'
+        }));
+
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
+        renderAll();
+
+    } catch (e) {
+        document.getElementById('loadingScreen').innerHTML = `
+            <div class="error-msg">
+                ❌ Error al cargar datos. Verifica que el Google Sheet esté compartido públicamente y que estés viendo esto desde GitHub Pages (no desde un archivo local).<br><br>
+                <small>${e.message}</small>
+            </div>`;
+    }
+}
+
+window.onload = loadData;
+</script>
+</body>
+</html>
