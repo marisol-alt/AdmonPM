@@ -337,8 +337,10 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     const vdPT=diasPorTomar*emp.sd,prPT=vdPT*.25,totPT=vdPT+prPT;
     const totGlobal=tot+totPT;
 
-    const proxVenc=gPorTomar.filter(p=>p.venc).sort((a,b)=>a.venc-b.venc)[0];
+    const hoyMs=new Date().getTime();
+    const proxVenc=gPorTomar.filter(p=>p.venc&&p.venc.getTime()>hoyMs).sort((a,b)=>a.venc-b.venc)[0];
     const proxVencFmt=proxVenc?fmtFull(proxVenc.venc):'sin fecha de vencimiento registrada';
+    const diasVencidos=gPorTomar.filter(p=>p.ev==='exp').reduce((s,p)=>s+p.pend,0);
     const diasSol=per.reduce((s,p)=>s+p.detS.length,0);
     const totalPendComun=Math.max(0,pend-diasSol);
     const diasPTComun=Math.max(0,diasPorTomar-gPorTomar.reduce((s,p)=>s+p.detS.length,0));
@@ -431,7 +433,7 @@ function buildCard(emp,per,pend,tv,ts,tsol){
         <div class="cacts">
             <button class="pbtn pbtn-outline" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',true)">🖨 Compacto</button>
             <button class="pbtn pbtn-dark" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',false)">🖨 Con detalle</button>
-            <button class="pbtn pbtn-com" onclick="abrirComunicado('${emp.nombre.replace(/'/g,"\\'")}','${emp.num}',${totalPendComun},'${proxVencFmt}',${diasPTComun})">📜 Comunicado</button>
+            <button class="pbtn pbtn-com" onclick="abrirComunicado('${emp.nombre.replace(/'/g,"\\'")}','${emp.num}',${totalPendComun},'${proxVencFmt}',${diasPTComun},${diasVencidos})">📜 Comunicado</button>
         </div>
     </div>`;
     return card;
@@ -639,32 +641,52 @@ function printReport(){
     win.document.close();
 }
 
-function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
+function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar,diasVencidos){
+    diasVencidos=diasVencidos||0;
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=820,height=700');
 
-    // Build the body text clearly separating total vs vencen
-    let parrafo1,parrafo2,highlightHTML;
+    const diasVigentes=Math.max(0,diasPorTomar-diasVencidos);
+    const diasAdeudo=Math.max(0,diasTotal-diasPorTomar);
 
-    if(diasPorTomar>0 && diasTotal>diasPorTomar){
-        // Has both: adeudo (no vence) + por tomar (vence)
-        const diasAdeudo=diasTotal-diasPorTomar;
-        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo total pendiente de vacaciones es de <strong>${diasTotal} d&iacute;as</strong>, distribuidos de la siguiente manera:`;
-        parrafo2=`Los <strong>${diasPorTomar} d&iacute;as con vencimiento</strong> deber&aacute;n ser ejercidos a m&aacute;s tardar el d&iacute;a <strong>${vencFmt}</strong>, conforme a la Ley Federal del Trabajo y la vigencia aplicable del periodo vacacional correspondiente. Los ${diasAdeudo} d&iacute;as restantes no tienen fecha de vencimiento, sin embargo se solicita su programaci&oacute;n oportuna.`;
-        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">Total d&iacute;as<br>pendientes</div></div>`
-            +`<div class="hl-item" style="background:#fff8f0;border-radius:6px;"><div class="hl-val" style="color:#b86200">${diasAdeudo}</div><div class="hl-lbl">Sin vencimiento<br>(adeudo)</div></div>`
-            +`<div class="hl-item" style="background:#fde8e8;border-radius:6px;"><div class="hl-val" style="color:#a61c1c">${diasPorTomar}</div><div class="hl-lbl">Con vencimiento<br>hasta ${vencFmt}</div></div>`;
+    // Build paragraphs based on case
+    let parrafo1,parrafo2,parrafo3='',highlightHTML,alertaVencidos='';
+
+    // Alerta de vencidos
+    if(diasVencidos>0){
+        alertaVencidos=`<div style="background:#fde8e8;border:1px solid #f5c0c0;border-left:4px solid #a61c1c;border-radius:6px;padding:12px 16px;margin:0 0 18px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:#a61c1c;">`
+            +`<strong>\u26A0\uFE0F Atenci\u00f3n:<\/strong> ${diasVencidos} d\u00eda${diasVencidos>1?'s':''} de vacaciones ya venci\u00f3${diasVencidos>1?'ron':''} sin ser ejercido${diasVencidos>1?'s':''}. `
+            +`Es responsabilidad de cada colaborador estar atento a las fechas de vencimiento de sus periodos vacacionales y planificar oportunamente su programaci\u00f3n.<\/div>`;
+    }
+
+    if(diasAdeudo>0&&diasVigentes>0&&diasVencidos>0){
+        parrafo1=`Con base en el registro de vacaciones administrado por el \u00e1rea de Administraci\u00f3n, su saldo total pendiente de vacaciones es de <strong>${diasTotal} d\u00eda${diasTotal!==1?'s':''}<\/strong>, distribuidos de la siguiente manera:`;
+        parrafo2=`Los <strong>${diasVigentes} d\u00edas vigentes con vencimiento<\/strong> deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>${vencFmt}<\/strong>, conforme a la Ley Federal del Trabajo y la vigencia aplicable del periodo vacacional correspondiente. Los ${diasAdeudo} d\u00edas de adeudo no tienen fecha de vencimiento, sin embargo se solicita su programaci\u00f3n oportuna.`;
+        parrafo3=`Se hace especial \u00e9nfasis en la importancia de estar al pendiente de las fechas de vencimiento de cada periodo vacacional, ya que una vez transcurrido dicho plazo los d\u00edas correspondientes se consideran ejercidos sin derecho a compensaci\u00f3n adicional.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}<\/div><div class="hl-lbl">Total d\u00edas<br>pendientes<\/div><\/div>`
+            +(diasAdeudo>0?`<div class="hl-item" style="background:#fff8f0"><div class="hl-val" style="color:#b86200">${diasAdeudo}<\/div><div class="hl-lbl">Sin vencimiento<br>(adeudo)<\/div><\/div>`:'')
+            +(diasVencidos>0?`<div class="hl-item" style="background:#fde8e8"><div class="hl-val" style="color:#a61c1c">${diasVencidos}<\/div><div class="hl-lbl">Ya vencidos<br>\u26A0 sin ejercer<\/div><\/div>`:'')
+            +(diasVigentes>0?`<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">${diasVigentes}<\/div><div class="hl-lbl">Vigentes<br>hasta ${vencFmt}<\/div><\/div>`:'');
+    } else if(diasAdeudo>0&&diasVigentes>0){
+        parrafo1=`Con base en el registro de vacaciones administrado por el \u00e1rea de Administraci\u00f3n, su saldo total pendiente de vacaciones es de <strong>${diasTotal} d\u00eda${diasTotal!==1?'s':''}<\/strong>, distribuidos de la siguiente manera:`;
+        parrafo2=`Los <strong>${diasVigentes} d\u00edas con vencimiento<\/strong> deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>${vencFmt}<\/strong>. Los ${diasAdeudo} d\u00edas restantes no tienen fecha de vencimiento, sin embargo se solicita su programaci\u00f3n oportuna.`;
+        parrafo3=`Se solicita estar al pendiente de las fechas de vencimiento de cada periodo vacacional a fin de evitar la p\u00e9rdida de d\u00edas por caducidad.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}<\/div><div class="hl-lbl">Total d\u00edas<br>pendientes<\/div><\/div>`
+            +`<div class="hl-item" style="background:#fff8f0"><div class="hl-val" style="color:#b86200">${diasAdeudo}<\/div><div class="hl-lbl">Sin vencimiento<br>(adeudo)<\/div><\/div>`
+            +`<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">${diasVigentes}<\/div><div class="hl-lbl">Con vencimiento<br>hasta ${vencFmt}<\/div><\/div>`;
     } else if(diasPorTomar>0){
-        // Only días con vencimiento
-        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d&iacute;a${diasTotal!==1?'s':''}</strong>.`;
-        parrafo2=`Conforme a la Ley Federal del Trabajo y a la vigencia aplicable del periodo vacacional correspondiente, estos d&iacute;as deber&aacute;n ser ejercidos a m&aacute;s tardar el d&iacute;a <strong>${vencFmt}</strong>.`;
-        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">D&iacute;as pendientes<br>por tomar</div></div>`
-            +`<div class="hl-item"><div class="hl-val" style="font-size:1rem;color:#1a6fb5">${vencFmt}</div><div class="hl-lbl">Fecha l&iacute;mite</div></div>`;
+        parrafo1=`Con base en el registro de vacaciones administrado por el \u00e1rea de Administraci\u00f3n, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d\u00eda${diasTotal!==1?'s':''}<\/strong>.`;
+        parrafo2=diasVencidos>0
+            ?`De estos, <strong>${diasVencidos} d\u00eda${diasVencidos>1?'s':''} ya venci\u00f3${diasVencidos>1?'ron':''}<\/strong> sin ser ejercido${diasVencidos>1?'s':''}. Los <strong>${diasVigentes} d\u00edas restantes<\/strong> deber\u00e1n ejercerse a m\u00e1s tardar el d\u00eda <strong>${vencFmt}<\/strong>.`
+            :`Conforme a la Ley Federal del Trabajo, deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>${vencFmt}<\/strong>.`;
+        parrafo3=`Se hace especial \u00e9nfasis en la responsabilidad de cada colaborador de planificar y ejercer sus vacaciones dentro de los periodos de vigencia correspondientes.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}<\/div><div class="hl-lbl">D\u00edas pendientes<\/div><\/div>`
+            +(diasVencidos>0?`<div class="hl-item" style="background:#fde8e8"><div class="hl-val" style="color:#a61c1c">${diasVencidos}<\/div><div class="hl-lbl">Ya vencidos<br>\u26A0 sin ejercer<\/div><\/div>`:'')
+            +(diasVigentes>0?`<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">${diasVigentes}<\/div><div class="hl-lbl">Vigentes hasta<br>${vencFmt}<\/div><\/div>`:'');
     } else {
-        // Only adeudo, no vencimiento
-        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d&iacute;a${diasTotal!==1?'s':''}</strong> acumulados, los cuales no tienen fecha de vencimiento.`;
-        parrafo2=`No obstante lo anterior, se solicita la programaci&oacute;n oportuna de los d&iacute;as pendientes en acuerdo con el encargado directo, a fin de mantener el control vacacional al corriente.`;
-        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">D&iacute;as pendientes<br>(sin vencimiento)</div></div>`;
+        parrafo1=`Con base en el registro de vacaciones administrado por el \u00e1rea de Administraci\u00f3n, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d\u00eda${diasTotal!==1?'s':''}<\/strong> acumulados sin fecha de vencimiento.`;
+        parrafo2=`No obstante, se solicita la programaci\u00f3n oportuna de los d\u00edas pendientes en conjunto con el encargado directo.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}<\/div><div class="hl-lbl">D\u00edas pendientes<br>(sin vencimiento)<\/div><\/div>`;
     }
 
     win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Comunicado \u00b7 '+nombre+'<\/title>'
@@ -676,14 +698,14 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     +'.company small{display:block;font-size:.7rem;font-weight:400;color:#777;font-family:\'DM Sans\',sans-serif;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}'
     +'.doc-meta{text-align:right;font-size:.72rem;color:#888;line-height:1.7;}'
     +'.doc-meta strong{color:#1c1c2e;display:block;font-size:.8rem;}'
-    +'.subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:20px 0 24px;border-radius:0 6px 6px 0;}'
+    +'.subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:20px 0 20px;border-radius:0 6px 6px 0;}'
     +'.subject-box p{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}'
     +'.subject-box strong{font-size:.88rem;color:#1c1c2e;}'
     +'.saludo{font-size:1rem;margin-bottom:16px;font-family:\'EB Garamond\',serif;}'
     +'.body-text{font-size:.92rem;line-height:1.9;color:#2a2a2a;font-family:\'EB Garamond\',serif;text-align:justify;}'
     +'.body-text p{margin-bottom:14px;}'
     +'.highlight{background:#f9f9f9;border:1px solid #e8e8e8;border-radius:6px;padding:14px 20px;margin:16px 0;display:flex;gap:0;align-items:stretch;justify-content:center;}'
-    +'.hl-item{text-align:center;padding:8px 20px;border-right:1px solid #e0e0e0;flex:1;}'
+    +'.hl-item{text-align:center;padding:8px 20px;border-right:1px solid #e0e0e0;flex:1;border-radius:4px;margin:2px;}'
     +'.hl-item:last-child{border-right:none;}'
     +'.hl-val{font-size:1.6rem;font-weight:700;color:#b86200;font-family:\'EB Garamond\',serif;}'
     +'.hl-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:4px;line-height:1.4;}'
@@ -701,12 +723,14 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     +'<div class="logo-row"><div class="company">Paz Mental<small>S.A.P.I. de C.V.<\/small><\/div>'
     +'<div class="doc-meta"><strong>Comunicado Interno<\/strong>Ciudad de M\u00e9xico, '+today+'<br>Ref: VAC-'+num+'-'+new Date().getFullYear()+'<\/div><\/div>'
     +'<div class="subject-box"><p>Asunto<\/p><strong>Aviso de saldo pendiente de vacaciones &mdash; '+nombre+'<\/strong><\/div>'
+    +alertaVencidos
     +'<p class="saludo">Buen d\u00eda,<\/p>'
     +'<div class="body-text">'
     +'<p>'+parrafo1+'<\/p>'
     +'<div class="highlight">'+highlightHTML+'<\/div>'
     +'<p>'+parrafo2+'<\/p>'
-    +'<p>La informaci\u00f3n compartida en este comunicado se encuentra calculada con base en los formatos previamente enviados; en caso de identificar alguna diferencia, favor de revisarlo directamente con el \u00e1rea de Administraci\u00f3n para su validaci\u00f3n correspondiente.<\/p>'
+    +(parrafo3?'<p>'+parrafo3+'<\/p>':'')
+    +'<p>La informaci\u00f3n compartida en este comunicado se encuentra calculada con base en el registro interno del \u00e1rea de Administraci\u00f3n; en caso de identificar alguna diferencia, favor de revisarlo directamente con dicha \u00e1rea para su validaci\u00f3n correspondiente.<\/p>'
     +'<p>Se solicita considerar y planificar oportunamente la programaci\u00f3n de los d\u00edas pendientes en conjunto con el encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia correspondiente y sin afectar la operaci\u00f3n del \u00e1rea.<\/p>'
     +'<\/div>'
     +'<div class="firma"><p>Saludos,<\/p><br><strong>Administraci\u00f3n<\/strong><div class="dept">Paz Mental S.A.P.I. de C.V.<\/div><\/div>'
