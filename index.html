@@ -716,84 +716,73 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar,diasVencidos,
 
     const diasVigentes=Math.max(0,diasPorTomar-diasVencidos);
     const diasAdeudo=Math.max(0,diasTotal-diasPorTomar-diasProgramados);
-    const diasTotalReal=diasTotal; // includes programados
 
-    let parrafo1,parrafo2,parrafo3='',highlightHTML,alertaVencidos='',notaProgramados='';
-
+    // ── Alerta vencidos ──
+    let alertaVencidos='';
     if(diasVencidos>0){
-        alertaVencidos='<div style="background:#fde8e8;border:1px solid #f5c0c0;border-left:4px solid #a61c1c;border-radius:6px;padding:12px 16px;margin:0 0 18px;font-family:\'DM Sans\',sans-serif;font-size:.85rem;color:#a61c1c;">'
-            +'<strong>\u26A0\uFE0F Atenci\u00f3n:<\/strong> '+diasVencidos+' d\u00eda'+(diasVencidos>1?'s':'')+' de vacaciones ya venci\u00f3'+(diasVencidos>1?'ron':'')+' sin ser ejercido'+(diasVencidos>1?'s':'')+'. '
-            +'Es responsabilidad de cada colaborador estar atento a las fechas de vencimiento de sus periodos vacacionales y planificar oportunamente su programaci\u00f3n.<\/div>';
+        alertaVencidos='<div style="background:#fde8e8;border:1px solid #f5c0c0;border-left:4px solid #a61c1c;border-radius:6px;padding:12px 16px;margin:0 0 16px;font-family:\'DM Sans\',sans-serif;font-size:.82rem;color:#a61c1c;">'
+            +'<strong>\u26A0\uFE0F Atenci\u00f3n:<\/strong> '+diasVencidos+' d\u00eda'+(diasVencidos>1?'s':'')+' ya venci\u00f3'+(diasVencidos>1?'ron':'')+' sin ser ejercido'+(diasVencidos>1?'s':'')+'. '
+            +'Es responsabilidad de cada colaborador estar atento a las fechas de vencimiento y planificar oportunamente.<\/div>';
     }
 
-    if(diasProgramados>0){
-        notaProgramados='<div style="background:#f0f7ff;border:1px solid #b8d4f0;border-left:4px solid #1a6fb5;border-radius:6px;padding:10px 14px;margin:12px 0;font-family:\'DM Sans\',sans-serif;font-size:.82rem;color:#1a6fb5;">'
-            +'<strong>\uD83D\uDCC5 D\u00edas ya programados:<\/strong> De su saldo total, <strong>'+diasProgramados+' d\u00eda'+(diasProgramados>1?'s':'')+' ya '+(diasProgramados>1?'est\u00e1n':'est\u00e1')+' programado'+(diasProgramados>1?'s':'')+' y pendiente'+(diasProgramados>1?'s':'')+' de disfrutar<\/strong>, conforme a la solicitud presentada por usted. '
-            +'Estos d\u00edas no han sido descontados de su saldo; forman parte de \u00e9l y ser\u00e1n ejercidos en las fechas acordadas.<\/div>';
+    // ── Cuadro visual ──
+    let highlightHTML='';
+    if(diasAdeudo>0) highlightHTML+='<div class="hl-item" style="background:#fff8f0"><div class="hl-val" style="color:#b86200">'+diasAdeudo+'<\/div><div class="hl-lbl">Adeudo<br>sin vencimiento<\/div><\/div>';
+    if(diasProgramados>0) highlightHTML+='<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">'+diasProgramados+'<\/div><div class="hl-lbl">Ya programados<br>por disfrutar<\/div><\/div>';
+    if(diasVencidos>0) highlightHTML+='<div class="hl-item" style="background:#fde8e8"><div class="hl-val" style="color:#a61c1c">'+diasVencidos+'<\/div><div class="hl-lbl">Ya vencidos<br>\u26A0 sin ejercer<\/div><\/div>';
+    if(diasVigentes>0) highlightHTML+='<div class="hl-item" style="background:#f0fff8"><div class="hl-val" style="color:#00836e">'+diasVigentes+'<\/div><div class="hl-lbl">Por programar<br>vence '+vencFmt+'<\/div><\/div>';
+    highlightHTML='<div class="hl-item"><div class="hl-val">'+diasTotal+'<\/div><div class="hl-lbl">Total d\u00edas<br>pendientes<\/div><\/div>'+highlightHTML;
+
+    // ── Párrafo principal ──
+    let partes=[];
+    if(diasAdeudo>0) partes.push('<strong>'+diasAdeudo+' d\u00eda'+(diasAdeudo>1?'s':'')+' de adeudo acumulado<\/strong> sin fecha de vencimiento');
+    if(diasProgramados>0) partes.push('<strong>'+diasProgramados+' d\u00eda'+(diasProgramados>1?'s':'')+' ya programado'+(diasProgramados>1?'s':'')+' y pendiente'+(diasProgramados>1?'s':'')+' de disfrutar<\/strong> conforme a su solicitud');
+    if(diasVencidos>0) partes.push('<strong>'+diasVencidos+' d\u00eda'+(diasVencidos>1?'s':'')+' que lamentablemente ya vencion sin ser ejercido'+(diasVencidos>1?'s':'')+'<\/strong>');
+    if(diasVigentes>0) partes.push('<strong>'+diasVigentes+' d\u00eda'+(diasVigentes>1?'s':'')+' pendiente'+(diasVigentes>1?'s':'')+' de programar<\/strong>, mismos que deber\u00e1n ser ejercidos a m\u00e1s tardar el <strong>'+vencFmt+'<\/strong> conforme a la Ley Federal del Trabajo');
+
+    let listaPartes='';
+    if(partes.length===1) listaPartes=partes[0]+'.';
+    else if(partes.length===2) listaPartes=partes[0]+'; y '+partes[1]+'.';
+    else listaPartes=partes.slice(0,-1).join('; ')+'; y '+partes[partes.length-1]+'.';
+
+    const parrafo1='Por medio del presente comunicado, el \u00e1rea de Administraci\u00f3n le informa que su saldo de vacaciones pendientes es de <strong>'+diasTotal+' d\u00eda'+(diasTotal!==1?'s':'')+'<\/strong>, desglosados de la siguiente manera: '+listaPartes;
+
+    let parrafo2='';
+    if(diasVigentes>0||diasVencidos>0){
+        parrafo2='Se le recuerda la importancia de planificar oportunamente los d\u00edas pendientes de programar en conjunto con su encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia y sin afectar la operaci\u00f3n del \u00e1rea.';
+    } else if(diasAdeudo>0){
+        parrafo2='Se solicita la programaci\u00f3n oportuna de los d\u00edas de adeudo en conjunto con su encargado directo, considerando las necesidades operativas del \u00e1rea.';
     }
-
-    const diasPendientesNetos=diasVigentes; // what actually needs to be taken
-
-    if(diasAdeudo>0&&diasVigentes>0){
-        parrafo1='Con base en los formatos de vacaciones enviados por usted al \u00e1rea de Administraci\u00f3n, su saldo total de vacaciones pendientes es de <strong>'+diasTotalReal+' d\u00eda'+(diasTotalReal!==1?'s':'')+'<\/strong>, distribuidos de la siguiente manera:';
-        parrafo2='Los <strong>'+diasVigentes+' d\u00edas con fecha de vencimiento<\/strong> deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>'+vencFmt+'<\/strong>, conforme a la Ley Federal del Trabajo. Los '+diasAdeudo+' d\u00edas restantes son adeudo acumulado sin fecha de vencimiento; se solicita su programaci\u00f3n oportuna.';
-        parrafo3='Se hace especial \u00e9nfasis en la importancia de estar al pendiente de las fechas de vencimiento de cada periodo vacacional.';
-        highlightHTML='<div class="hl-item"><div class="hl-val">'+diasTotalReal+'<\/div><div class="hl-lbl">Total d\u00edas<br>pendientes<\/div><\/div>'
-            +'<div class="hl-item" style="background:#fff8f0"><div class="hl-val" style="color:#b86200">'+diasAdeudo+'<\/div><div class="hl-lbl">Adeudo<br>sin vencimiento<\/div><\/div>'
-            +(diasProgramados>0?'<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">'+diasProgramados+'<\/div><div class="hl-lbl">Ya programados<br>por disfrutar<\/div><\/div>':'')
-            +(diasVencidos>0?'<div class="hl-item" style="background:#fde8e8"><div class="hl-val" style="color:#a61c1c">'+diasVencidos+'<\/div><div class="hl-lbl">Ya vencidos<br>\u26A0 sin ejercer<\/div><\/div>':'')
-            +'<div class="hl-item" style="background:#f0fff8"><div class="hl-val" style="color:#00836e">'+diasVigentes+'<\/div><div class="hl-lbl">Por tomar<br>hasta '+vencFmt+'<\/div><\/div>';
-    } else if(diasVigentes>0){
-        parrafo1='Con base en los formatos de vacaciones enviados por usted al \u00e1rea de Administraci\u00f3n, su saldo pendiente de vacaciones corresponde a <strong>'+diasTotalReal+' d\u00eda'+(diasTotalReal!==1?'s':'')+'<\/strong>.';
-        parrafo2=(diasVencidos>0
-            ?'De estos, <strong>'+diasVencidos+' d\u00eda'+(diasVencidos>1?'s':'')+' ya venci\u00f3'+(diasVencidos>1?'ron':'')+' sin ser ejercido'+(diasVencidos>1?'s':'')+'<\/strong>. Los <strong>'+diasVigentes+' d\u00edas restantes<\/strong> deber\u00e1n ejercerse a m\u00e1s tardar el d\u00eda <strong>'+vencFmt+'<\/strong>.'
-            :'Conforme a la Ley Federal del Trabajo, deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>'+vencFmt+'<\/strong>.');
-        parrafo3='Se hace especial \u00e9nfasis en la responsabilidad de cada colaborador de planificar y ejercer sus vacaciones dentro de los periodos de vigencia correspondientes.';
-        highlightHTML='<div class="hl-item"><div class="hl-val">'+diasTotalReal+'<\/div><div class="hl-lbl">Total d\u00edas<br>pendientes<\/div><\/div>'
-            +(diasProgramados>0?'<div class="hl-item" style="background:#f0f7ff"><div class="hl-val" style="color:#1a6fb5">'+diasProgramados+'<\/div><div class="hl-lbl">Ya programados<br>por disfrutar<\/div><\/div>':'')
-            +(diasVencidos>0?'<div class="hl-item" style="background:#fde8e8"><div class="hl-val" style="color:#a61c1c">'+diasVencidos+'<\/div><div class="hl-lbl">Ya vencidos<br>\u26A0<\/div><\/div>':'')
-            +'<div class="hl-item" style="background:#f0fff8"><div class="hl-val" style="color:#00836e">'+diasVigentes+'<\/div><div class="hl-lbl">Por tomar<br>hasta '+vencFmt+'<\/div><\/div>';
-    } else {
-        parrafo1='Con base en los formatos de vacaciones enviados por usted al \u00e1rea de Administraci\u00f3n, su saldo pendiente de vacaciones corresponde a <strong>'+diasTotalReal+' d\u00eda'+(diasTotalReal!==1?'s':'')+'<\/strong> acumulados sin fecha de vencimiento.';
-        parrafo2='No obstante, se solicita la programaci\u00f3n oportuna en conjunto con el encargado directo.';
-        highlightHTML='<div class="hl-item"><div class="hl-val">'+diasTotalReal+'<\/div><div class="hl-lbl">D\u00edas pendientes<br>(sin vencimiento)<\/div><\/div>';
-    }
-
-    const printWin = (content) => {
-        const pw=window.open('','_blank','width=860,height=820');
-        pw.document.write(content);
-        pw.document.close();
-    };
 
     const body='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Comunicado \u00b7 '+nombre+'<\/title>'
     +'<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">'
-    +'<style id="ds">*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;color:#1a1a1a;background:white;}'
-    +'.ctrl{display:flex;gap:12px;align-items:center;padding:10px 20px;background:#f5f4f0;border-bottom:1px solid #ddd;flex-wrap:wrap;}'
-    +'.ctrl label{font-size:12px;color:#52526e;display:flex;align-items:center;gap:6px;}'
-    +'.ctrl select{padding:5px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;font-family:\'DM Sans\',sans-serif;background:white;cursor:pointer;}'
-    +'.btn-p{padding:7px 20px;background:#1c1c2e;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:\'DM Sans\',sans-serif;font-weight:500;margin-left:auto;}'
-    +'.page{max-width:740px;margin:0 auto;padding:44px 52px;}'
-    +'.logo-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #1c1c2e;}'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;color:#1a1a1a;background:white;}'
+    +'.ctrl{display:flex;gap:12px;align-items:center;padding:9px 18px;background:#f5f4f0;border-bottom:1px solid #ddd;flex-wrap:wrap;}'
+    +'.ctrl label{font-size:11.5px;color:#52526e;display:flex;align-items:center;gap:5px;}'
+    +'.ctrl select{padding:4px 9px;border:1px solid #ddd;border-radius:5px;font-size:11.5px;background:white;cursor:pointer;}'
+    +'.btn-p{padding:6px 16px;background:#1c1c2e;color:#fff;border:none;border-radius:5px;font-size:11.5px;cursor:pointer;font-family:\'DM Sans\',sans-serif;margin-left:auto;}'
+    +'.page{max-width:720px;margin:0 auto;padding:44px 52px;}'
+    +'.logo-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid #1c1c2e;}'
     +'.company{font-family:\'EB Garamond\',serif;font-size:1.3rem;font-weight:600;color:#1c1c2e;}'
     +'.company small{display:block;font-size:.7rem;font-weight:400;color:#777;font-family:\'DM Sans\',sans-serif;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}'
     +'.doc-meta{text-align:right;font-size:.72rem;color:#888;line-height:1.7;}'
     +'.doc-meta strong{color:#1c1c2e;display:block;font-size:.8rem;}'
-    +'.subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:18px 0;border-radius:0 6px 6px 0;}'
-    +'.subject-box p{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}'
+    +'.subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:16px 0;border-radius:0 6px 6px 0;}'
+    +'.subject-box p{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}'
     +'.subject-box strong{font-size:.88rem;color:#1c1c2e;}'
     +'.saludo{font-size:1rem;margin-bottom:14px;font-family:\'EB Garamond\',serif;}'
-    +'.body-text{font-size:.9rem;line-height:1.85;color:#2a2a2a;font-family:\'EB Garamond\',serif;text-align:justify;}'
+    +'.body-text{font-size:.9rem;line-height:1.88;color:#2a2a2a;font-family:\'EB Garamond\',serif;text-align:justify;}'
     +'.body-text p{margin-bottom:13px;}'
     +'.highlight{background:#f9f9f9;border:1px solid #e8e8e8;border-radius:6px;padding:12px 16px;margin:14px 0;display:flex;gap:0;align-items:stretch;justify-content:center;}'
-    +'.hl-item{text-align:center;padding:6px 16px;border-right:1px solid #e0e0e0;flex:1;}'
+    +'.hl-item{text-align:center;padding:6px 14px;border-right:1px solid #e0e0e0;flex:1;}'
     +'.hl-item:last-child{border-right:none;}'
-    +'.hl-val{font-size:1.5rem;font-weight:700;color:#b86200;font-family:\'EB Garamond\',serif;}'
+    +'.hl-val{font-size:1.45rem;font-weight:700;color:#1c1c2e;font-family:\'EB Garamond\',serif;}'
     +'.hl-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:3px;line-height:1.4;}'
-    +'.firma{margin-top:36px;padding-top:14px;border-top:1px solid #e8e8e8;}'
+    +'.firma{margin-top:34px;padding-top:14px;border-top:1px solid #e8e8e8;}'
     +'.firma p{font-size:.88rem;color:#444;margin-bottom:14px;font-family:\'EB Garamond\',serif;}'
     +'.firma strong{color:#1c1c2e;}'
     +'.firma .dept{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-top:5px;}'
-    +'.footer-note{margin-top:28px;padding-top:8px;border-top:1px solid #eee;font-size:.6rem;color:#bbb;text-align:center;line-height:1.7;}'
+    +'.footer-note{margin-top:24px;padding-top:8px;border-top:1px solid #eee;font-size:.6rem;color:#bbb;text-align:center;line-height:1.7;}'
     +'@media print{.ctrl{display:none!important;}body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}'
     +'<\/style><\/head><body>'
     +'<div class="ctrl">'
@@ -808,19 +797,16 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar,diasVencidos,
     +alertaVencidos
     +'<p class="saludo">Buen d\u00eda,<\/p>'
     +'<div class="body-text">'
-    +'<p>'+parrafo1+'<\/p>'
     +'<div class="highlight">'+highlightHTML+'<\/div>'
-    +notaProgramados
-    +'<p>'+parrafo2+'<\/p>'
-    +(parrafo3?'<p>'+parrafo3+'<\/p>':'')
+    +'<p>'+parrafo1+'<\/p>'
+    +(parrafo2?'<p>'+parrafo2+'<\/p>':'')
     +'<p>La informaci\u00f3n contenida en este comunicado se basa en los formatos de vacaciones enviados por el colaborador; en caso de identificar alguna diferencia, favor de revisarlo directamente con el \u00e1rea de Administraci\u00f3n para su validaci\u00f3n.<\/p>'
-    +'<p>Se solicita considerar y planificar oportunamente los d\u00edas pendientes en conjunto con el encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia y sin afectar la operaci\u00f3n del \u00e1rea.<\/p>'
     +'<\/div>'
     +'<div class="firma"><p>Saludos,<\/p><br><strong>Administraci\u00f3n<\/strong><div class="dept">Paz Mental S.A.P.I. de C.V.<\/div><\/div>'
     +'<div class="footer-note">Comunicado de car\u00e1cter informativo generado el '+today+'. Para aclaraciones, comun\u00edquese con el \u00e1rea de Administraci\u00f3n.<\/div>'
     +'<\/div>'
     +'<style id="ds2"><\/style>'
-    +'<script>function ap(){const o=document.getElementById("sO").value,f=document.getElementById("sF").value;let s="@page{size:A4 "+o+";margin:"+(f==="single"?"8mm 6mm":"14mm 12mm")+";}";if(f==="single"){s+=".page{padding:20px 28px!important;}.hl-val{font-size:1.1rem!important;}.body-text{font-size:.78rem!important;line-height:1.7!important;}.saludo{font-size:.9rem!important;}.company{font-size:1.1rem!important;}";}document.getElementById("ds2").textContent=s;}ap();<\/script>'
+    +'<script>function ap(){const o=document.getElementById("sO").value,f=document.getElementById("sF").value;let s="@page{size:A4 "+o+";margin:"+(f==="single"?"8mm 6mm":"14mm 12mm")+";}";if(f==="single"){s+=".page{padding:20px 28px!important;}.hl-val{font-size:1.1rem!important;}.body-text{font-size:.78rem!important;line-height:1.72!important;}.saludo{font-size:.88rem!important;}.company{font-size:1.05rem!important;}";}document.getElementById("ds2").textContent=s;}ap();<\/script>'
     +'<\/body><\/html>';
 
     win.document.write(body);
