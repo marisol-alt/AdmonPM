@@ -153,6 +153,8 @@
         .pbtn-outline:hover{background:#f5f4f0;}
         .pbtn-com{background:var(--accent);color:#fff;}
         .pbtn-com:hover{opacity:.85;}
+        .bdg-baja{background:#f0f0f0;color:#888;}
+        .ecard.es-baja{opacity:.65;filter:grayscale(.4);}
 
         /* LOADING */
         #loadScr{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px;color:var(--ink-soft);}
@@ -219,6 +221,7 @@
         <button class="fb" onclick="setFilter('vencidos',this)">⚠ Vencidos</button>
         <button class="fb" onclick="setFilter('proximos',this)">⏰ Próximos 30d</button>
         <button class="fb" onclick="setFilter('solicitados',this)">📋 Solicitados</button>
+        <button class="fb" onclick="setFilter('bajas',this)">👤 Bajas</button>
         <button class="fb-rep" onclick="openReport()">📊 Reporte Dirección</button>
     </div>
     <div class="elist" id="eList"></div>
@@ -289,7 +292,8 @@ function calcular(emp){
 function renderAll(){
     const list=document.getElementById('eList');list.innerHTML='';
     let tP=0,tVn=0,tS=0,tOk=0,tSol=0;
-    emps.forEach(emp=>{
+    const empsFiltrados=emps.filter(e=>curFilter==='bajas'?e.est==='Baja':e.est!=='Baja');
+    empsFiltrados.forEach(emp=>{
         const per=calcular(emp);
         const pend=per.reduce((s,p)=>s+p.pend,0);
         const tv=per.some(p=>p.ev==='exp'&&p.pend>0);
@@ -298,13 +302,16 @@ function renderAll(){
         if(pend>0)tP++;if(tv)tVn++;if(ts)tS++;if(pend===0)tOk++;if(tsol)tSol++;
         list.appendChild(buildCard(emp,per,pend,tv,ts,tsol));
     });
+    const totalActivos=emps.filter(e=>e.est!=='Baja').length;
+    const totalBajas=emps.filter(e=>e.est==='Baja').length;
     document.getElementById('sBar').innerHTML=`
         <div class="sp"><div class="sd" style="background:var(--ink)"></div><span><strong>${emps.length}</strong> empleados</span></div>
         <div class="sp"><div class="sd" style="background:var(--accent)"></div><span><strong>${tP}</strong> con pendientes</span></div>
         <div class="sp"><div class="sd" style="background:var(--red)"></div><span><strong>${tVn}</strong> vencidos</span></div>
         <div class="sp"><div class="sd" style="background:var(--warn)"></div><span><strong>${tS}</strong> vencen pronto</span></div>
         <div class="sp"><div class="sd" style="background:var(--blue)"></div><span><strong>${tSol}</strong> solicitados</span></div>
-        <div class="sp"><div class="sd" style="background:var(--ok)"></div><span><strong>${tOk}</strong> al corriente</span></div>`;
+        <div class="sp"><div class="sd" style="background:var(--ok)"></div><span><strong>${tOk}</strong> al corriente</span></div>
+        <div class="sp"><div class="sd" style="background:#888"></div><span><strong>${totalBajas}</strong> bajas</span></div>`;
     document.getElementById('lastUpd').textContent='Actualizado: '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -314,6 +321,8 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     card.dataset.n=emp.nombre.toLowerCase();
     card.dataset.f=tv?'vencidos':ts?'proximos':pend>0?'pendientes':'ok';
     card.dataset.sol=tsol?'1':'0';
+    card.dataset.est=emp.est==='Baja'?'baja':'activo';
+    if(emp.est==='Baja')card.classList.add('es-baja');
 
     const anios=per.length;
     const gAdeudo=per.filter(p=>p.ev==='nv'&&p.pend>0);
@@ -331,6 +340,7 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     const diasPTComun=Math.max(0,diasPorTomar-gPorTomar.reduce((s,p)=>s+p.detS.length,0));
 
     let bdgs='';
+    if(emp.est==='Baja')bdgs+=`<span class="bdg bdg-baja">👤 Baja</span>`;
     if(pend>0)bdgs+=`<span class="bdg bdg-p">${pend} pend.</span>`;
     if(tv)bdgs+=`<span class="bdg bdg-e">⚠ Vencidos</span>`;
     else if(ts)bdgs+=`<span class="bdg bdg-s">⏰ Pronto</span>`;
@@ -443,7 +453,8 @@ function filterCards(){
             curFilter==='pendientes'?c.dataset.f!=='ok':
             curFilter==='vencidos'?c.dataset.f==='vencidos':
             curFilter==='proximos'?c.dataset.f==='proximos':
-            curFilter==='solicitados'?c.dataset.sol==='1':true;
+            curFilter==='solicitados'?c.dataset.sol==='1':
+            curFilter==='bajas'?c.dataset.est==='baja':true;
         c.style.display=mn&&mf?'':'none';
     });
 }
@@ -620,6 +631,31 @@ function printReport(){
 function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=820,height=700');
+
+    // Build the body text clearly separating total vs vencen
+    let parrafo1,parrafo2,highlightHTML;
+
+    if(diasPorTomar>0 && diasTotal>diasPorTomar){
+        // Has both: adeudo (no vence) + por tomar (vence)
+        const diasAdeudo=diasTotal-diasPorTomar;
+        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo total pendiente de vacaciones es de <strong>${diasTotal} d&iacute;as</strong>, distribuidos de la siguiente manera:`;
+        parrafo2=`Los <strong>${diasPorTomar} d&iacute;as con vencimiento</strong> deber&aacute;n ser ejercidos a m&aacute;s tardar el d&iacute;a <strong>${vencFmt}</strong>, conforme a la Ley Federal del Trabajo y la vigencia aplicable del periodo vacacional correspondiente. Los ${diasAdeudo} d&iacute;as restantes no tienen fecha de vencimiento, sin embargo se solicita su programaci&oacute;n oportuna.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">Total d&iacute;as<br>pendientes</div></div>`
+            +`<div class="hl-item" style="background:#fff8f0;border-radius:6px;"><div class="hl-val" style="color:#b86200">${diasAdeudo}</div><div class="hl-lbl">Sin vencimiento<br>(adeudo)</div></div>`
+            +`<div class="hl-item" style="background:#fde8e8;border-radius:6px;"><div class="hl-val" style="color:#a61c1c">${diasPorTomar}</div><div class="hl-lbl">Con vencimiento<br>hasta ${vencFmt}</div></div>`;
+    } else if(diasPorTomar>0){
+        // Only días con vencimiento
+        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d&iacute;a${diasTotal!==1?'s':''}</strong>.`;
+        parrafo2=`Conforme a la Ley Federal del Trabajo y a la vigencia aplicable del periodo vacacional correspondiente, estos d&iacute;as deber&aacute;n ser ejercidos a m&aacute;s tardar el d&iacute;a <strong>${vencFmt}</strong>.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">D&iacute;as pendientes<br>por tomar</div></div>`
+            +`<div class="hl-item"><div class="hl-val" style="font-size:1rem;color:#1a6fb5">${vencFmt}</div><div class="hl-lbl">Fecha l&iacute;mite</div></div>`;
+    } else {
+        // Only adeudo, no vencimiento
+        parrafo1=`Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, su saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d&iacute;a${diasTotal!==1?'s':''}</strong> acumulados, los cuales no tienen fecha de vencimiento.`;
+        parrafo2=`No obstante lo anterior, se solicita la programaci&oacute;n oportuna de los d&iacute;as pendientes en acuerdo con el encargado directo, a fin de mantener el control vacacional al corriente.`;
+        highlightHTML=`<div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">D&iacute;as pendientes<br>(sin vencimiento)</div></div>`;
+    }
+
     win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Comunicado \u00b7 '+nombre+'<\/title>'
     +'<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">'
     +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;font-size:11.5px;color:#1a1a1a;background:white;}'
@@ -635,11 +671,11 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     +'.saludo{font-size:1rem;margin-bottom:16px;font-family:\'EB Garamond\',serif;}'
     +'.body-text{font-size:.92rem;line-height:1.9;color:#2a2a2a;font-family:\'EB Garamond\',serif;text-align:justify;}'
     +'.body-text p{margin-bottom:14px;}'
-    +'.highlight{background:#fff8f0;border:1px solid #f5dfc0;border-radius:6px;padding:12px 20px;margin:16px 0;display:flex;gap:0;flex-wrap:wrap;align-items:center;justify-content:center;}'
-    +'.hl-item{text-align:center;padding:0 16px;border-right:1px solid #f5dfc0;}'
+    +'.highlight{background:#f9f9f9;border:1px solid #e8e8e8;border-radius:6px;padding:14px 20px;margin:16px 0;display:flex;gap:0;align-items:stretch;justify-content:center;}'
+    +'.hl-item{text-align:center;padding:8px 20px;border-right:1px solid #e0e0e0;flex:1;}'
     +'.hl-item:last-child{border-right:none;}'
-    +'.hl-val{font-size:1.5rem;font-weight:700;color:#b86200;font-family:\'EB Garamond\',serif;}'
-    +'.hl-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:3px;}'
+    +'.hl-val{font-size:1.6rem;font-weight:700;color:#b86200;font-family:\'EB Garamond\',serif;}'
+    +'.hl-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:4px;line-height:1.4;}'
     +'.firma{margin-top:44px;padding-top:16px;border-top:1px solid #e8e8e8;}'
     +'.firma p{font-size:.88rem;color:#444;margin-bottom:16px;font-family:\'EB Garamond\',serif;}'
     +'.firma strong{color:#1c1c2e;}'
@@ -656,12 +692,9 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     +'<div class="subject-box"><p>Asunto<\/p><strong>Aviso de saldo pendiente de vacaciones &mdash; '+nombre+'<\/strong><\/div>'
     +'<p class="saludo">Buen d\u00eda,<\/p>'
     +'<div class="body-text">'
-    +'<p>Con base en los formatos de vacaciones recibidos por el \u00e1rea de Administraci\u00f3n hasta la fecha, el saldo pendiente de vacaciones corresponde a <strong>'+diasTotal+' d\u00eda'+(diasTotal!==1?'s':'')+'<\/strong>, mismos que, conforme a la Ley Federal del Trabajo y a la vigencia aplicable del periodo vacacional correspondiente, deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>'+vencFmt+'<\/strong>.<\/p>'
-    +'<div class="highlight">'
-    +'<div class="hl-item"><div class="hl-val">'+diasTotal+'<\/div><div class="hl-lbl">D\u00edas pendientes totales<\/div><\/div>'
-    +(diasPorTomar>0?'<div class="hl-item"><div class="hl-val">'+diasPorTomar+'<\/div><div class="hl-lbl">D\u00edas por tomar<br>con vencimiento<\/div><\/div>':'')
-    +'<div class="hl-item"><div class="hl-val" style="font-size:1rem;color:#1a6fb5">'+vencFmt+'<\/div><div class="hl-lbl">Fecha l\u00edmite pr\u00f3xima<\/div><\/div>'
-    +'<\/div>'
+    +'<p>'+parrafo1+'<\/p>'
+    +'<div class="highlight">'+highlightHTML+'<\/div>'
+    +'<p>'+parrafo2+'<\/p>'
     +'<p>La informaci\u00f3n compartida en este comunicado se encuentra calculada con base en los formatos previamente enviados; en caso de identificar alguna diferencia, favor de revisarlo directamente con el \u00e1rea de Administraci\u00f3n para su validaci\u00f3n correspondiente.<\/p>'
     +'<p>Se solicita considerar y planificar oportunamente la programaci\u00f3n de los d\u00edas pendientes en conjunto con el encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia correspondiente y sin afectar la operaci\u00f3n del \u00e1rea.<\/p>'
     +'<\/div>'
@@ -685,7 +718,7 @@ async function loadData(){
             num:String(r.c[0]?.v||''),nombre:r.c[1]?.v||'',
             fi:parseDate(r.c[2]?.v||r.c[2]?.f),
             sd:parseFloat(r.c[3]?.v||0),
-            eq:r.c[4]?.v||'',rol:r.c[5]?.v||'Empleado'
+            eq:r.c[4]?.v||'',rol:r.c[5]?.v||'Empleado',est:r.c[6]?.v||'Activo'
         }));
         vacs=vj.table.rows.map(r=>({
             num:String(r.c[0]?.v||''),
