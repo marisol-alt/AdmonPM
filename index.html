@@ -6,17 +6,16 @@
     <title>Vacaciones · Paz Mental</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ink:#1c1c2e; --ink-soft:#52526e; --ink-muted:#9898b8;
-            --bg:#f0eff8; --white:#fff;
-            --accent:#6c5ce7; --accent-light:#ede9fd;
-            --ok:#00836e; --ok-light:#d4f5ef;
-            --warn:#b86200; --warn-light:#fdecd4;
-            --red:#a61c1c; --red-light:#fde8e8;
-            --blue:#1a6fb5; --blue-light:#dceeff;
-            --purple-light:#f0edff;
-            --border:#e2e0f0;
-            --sa:#f7f6ff; --sb:#f2faf8;
+        :root{
+            --ink:#1c1c2e;--ink-soft:#52526e;--ink-muted:#9898b8;
+            --bg:#f0eff8;--white:#fff;
+            --accent:#6c5ce7;--accent-light:#ede9fd;
+            --ok:#00836e;--ok-light:#d4f5ef;
+            --warn:#b86200;--warn-light:#fdecd4;
+            --red:#a61c1c;--red-light:#fde8e8;
+            --blue:#1a6fb5;--blue-light:#dceeff;
+            --purple-light:#f0edff;--border:#e2e0f0;
+            --sa:#f7f6ff;--sb:#f2faf8;
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:13.5px;line-height:1.4;}
@@ -71,8 +70,8 @@
         .cb{display:none;border-top:1px solid var(--border);}
         .cb.open{display:block;}
 
-        /* EMP STRIP */
-        .estrip{display:flex;flex-wrap:nowrap;background:var(--purple-light);border-bottom:1px solid var(--border);align-items:stretch;}
+        /* STRIP */
+        .estrip{display:flex;align-items:stretch;border-bottom:1px solid var(--border);}
         .strip-left{display:flex;flex-direction:column;border-right:2px solid var(--border);flex-shrink:0;}
         .strip-left .ei{border-bottom:1px solid var(--border);border-right:none;flex:1;min-width:130px;}
         .strip-left .ei:last-child{border-bottom:none;}
@@ -81,36 +80,21 @@
         .strip-row .ei{flex:1;min-width:90px;}
         .strip-warn{background:#fff8f0;border-bottom:1px solid var(--border);}
         .strip-blue{background:#f0f7ff;}
-        .strip-total{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 16px;background:#ede9fd;border-left:2px solid var(--border);flex-shrink:0;min-width:120px;gap:4px;}
+        .strip-total{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 16px;background:var(--accent-light);border-left:2px solid var(--border);flex-shrink:0;min-width:120px;gap:4px;}
         .ei{padding:6px 12px;border-right:1px solid var(--border);}
-        .ei:last-child{border-right:none;}
-        .warn-lbl{color:var(--warn)!important;}
-        .blue-lbl{color:var(--blue)!important;}
-        .pbtn-com{background:var(--accent);color:#fff;}
-        .pbtn-com:hover{opacity:.85;}
         .ei:last-child{border-right:none;}
         .eilbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);display:block;margin-bottom:1px;}
         .eival{font-size:.85rem;font-weight:600;}
         .eival.hi{color:var(--accent);}
+        .warn-lbl{color:var(--warn)!important;}
+        .blue-lbl{color:var(--blue)!important;}
 
-        /* SECTION DIVIDERS */
-        .sec-hdr{
-            padding:6px 14px;font-size:.68rem;font-weight:600;
-            text-transform:uppercase;letter-spacing:.07em;
-            display:flex;align-items:center;gap:8px;
-        }
-        .sec-hdr.adeudo{background:#fff8f0;color:var(--warn);border-bottom:1px solid #f5dfc0;}
-        .sec-hdr.portomar{background:#f0f7ff;color:var(--blue);border-bottom:1px solid #c8dff5;}
-        .sec-hdr.completo{background:var(--ok-light);color:var(--ok);border-bottom:1px solid #b0e8d8;}
-        .sec-badge{background:rgba(0,0,0,.08);padding:1px 8px;border-radius:10px;font-size:.65rem;}
-
-        /* YEAR TABLE */
+        /* TABLE */
         .yt{width:100%;border-collapse:collapse;}
         .yt thead tr{background:#2d2b45;color:#fff;}
         .yt thead th{padding:5px 10px;font-size:.63rem;text-transform:uppercase;letter-spacing:.07em;font-weight:500;text-align:left;}
         .yt thead th.c{text-align:center;}
         .yr{border-bottom:1px solid var(--border);}
-        .yr:last-child{border-bottom:none;}
         .yr.sa{background:var(--sa);}
         .yr.sb{background:var(--sb);}
         .yr.rexp{background:#fff3f3;}
@@ -129,24 +113,11 @@
         .pn.y{color:var(--accent);}
         .pn.n{color:var(--ok);}
         .dc-done{display:inline-block;background:var(--ok-light);color:var(--ok);padding:1px 7px;border-radius:8px;font-size:.65rem;font-weight:500;}
-
-        /* VENC CHIPS */
-        .vc{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:.67rem;font-weight:500;line-height:1.3;}
+        .vc{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:.67rem;font-weight:500;}
         .vc-nv{background:#f0f0f8;color:var(--ink-soft);}
         .vc-exp{background:var(--red-light);color:var(--red);font-weight:700;}
         .vc-soon{background:var(--warn-light);color:var(--warn);font-weight:700;}
         .vc-fut{background:#eef3fa;color:var(--blue);}
-
-        /* MONEY INLINE */
-        .money-ref{font-size:.67rem;color:var(--ink-muted);margin-top:2px;}
-        .money-ref span{color:var(--accent);font-weight:600;}
-
-        /* SOL ROW */
-        .solrow td{background:#f0f7ff;border-top:1px dashed #b8d4f0;font-size:.73rem;color:var(--blue);padding:4px 10px;}
-
-        /* TOTALS */
-        .trow td{background:var(--ink);color:#fff;font-weight:600;font-size:.78rem;padding:6px 10px;}
-        .trow td.c{text-align:center;}
 
         /* FECHA LISTS */
         .ftgl{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;color:var(--blue);cursor:pointer;margin-top:3px;background:var(--blue-light);padding:2px 8px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;user-select:none;}
@@ -161,6 +132,18 @@
         .fi.sol .fdia{color:#6da8e0;}
         .fi.sol .fdate{color:var(--blue);}
 
+        /* SOLICITADOS ROW */
+        .solrow td{background:#f0f7ff;border-top:1px dashed #b8d4f0;font-size:.73rem;color:var(--blue);padding:4px 10px;}
+
+        /* COMPLETOS HEADER */
+        .sec-hdr{padding:6px 12px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:8px;cursor:pointer;}
+        .sec-hdr.completo{background:var(--ok-light);color:var(--ok);border-top:1px solid #b0e8d8;}
+        .sec-badge{background:rgba(0,0,0,.08);padding:1px 8px;border-radius:10px;font-size:.65rem;}
+
+        /* TOTALS */
+        .trow td{background:var(--ink);color:#fff;font-weight:600;font-size:.78rem;padding:6px 10px;}
+        .trow td.c{text-align:center;}
+
         /* ACTIONS */
         .cacts{display:flex;gap:7px;margin:8px 14px 10px;flex-wrap:wrap;}
         .pbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border:none;border-radius:7px;font-size:.73rem;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;}
@@ -168,6 +151,8 @@
         .pbtn-dark:hover{opacity:.85;}
         .pbtn-outline{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
         .pbtn-outline:hover{background:#f5f4f0;}
+        .pbtn-com{background:var(--accent);color:#fff;}
+        .pbtn-com:hover{opacity:.85;}
 
         /* LOADING */
         #loadScr{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px;color:var(--ink-soft);}
@@ -175,9 +160,7 @@
         @keyframes spin{to{transform:rotate(360deg);}}
         .err{margin:28px;padding:14px 18px;background:var(--red-light);color:var(--red);border-radius:8px;font-size:.85rem;}
 
-        /* ═══════════════════════════
-           REPORT MODAL
-        ═══════════════════════════ */
+        /* REPORT MODAL */
         #repModal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.55);align-items:center;justify-content:center;}
         #repModal.open{display:flex;}
         .mbox{background:var(--white);border-radius:12px;width:min(900px,96vw);max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
@@ -186,95 +169,36 @@
         .mclose{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.78rem;}
         .macts{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;gap:8px;}
         .rwrap{padding:16px 20px 28px;}
-
-        /* REPORT CONTENT */
         .rmeta{font-size:.75rem;color:var(--ink-muted);margin-bottom:16px;}
         .rmeta strong{color:var(--ink);}
-
-        /* report table */
         .rtbl{width:100%;border-collapse:collapse;font-size:.8rem;}
         .rtbl thead tr{background:var(--ink);color:#fff;}
         .rtbl thead th{padding:8px 12px;text-align:left;font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;border-right:1px solid rgba(255,255,255,.1);}
         .rtbl thead th:last-child{border-right:none;}
         .rtbl tbody tr{border-bottom:1px solid var(--border);}
         .rtbl tbody tr:nth-child(even){background:#faf9ff;}
-        .rtbl tbody tr:last-child{border-bottom:none;}
         .rtbl td{padding:9px 12px;vertical-align:top;border-right:1px solid var(--border);}
         .rtbl td:last-child{border-right:none;}
         .rtbl tfoot tr{background:var(--ink);color:#fff;}
         .rtbl tfoot td{padding:8px 12px;font-weight:600;font-size:.8rem;border-right:1px solid rgba(255,255,255,.1);}
-        .rtbl tfoot td:last-child{border-right:none;}
-
         .rname{font-weight:600;font-size:.85rem;}
         .rsub{font-size:.68rem;color:var(--ink-muted);margin-top:2px;}
-
-        /* pasivo cell */
         .pc-dias{font-size:1.1rem;font-weight:700;color:var(--warn);}
-        .pc-breakdown{font-size:.68rem;color:var(--ink-muted);margin-top:3px;line-height:1.6;}
-        .pc-total{font-size:.9rem;font-weight:700;color:var(--red);}
-
-        /* portomar cell */
+        .pc-total{font-size:.9rem;font-weight:700;color:var(--red);margin-top:3px;}
         .pt-dias{font-size:1.1rem;font-weight:700;color:var(--blue);}
         .pt-sub{font-size:.68rem;color:var(--ink-muted);margin-top:3px;}
-        .pt-venc{margin-top:5px;}
         .vchip{display:inline-block;padding:1px 7px;border-radius:8px;font-size:.65rem;font-weight:500;margin-right:3px;}
         .vchip-e{background:var(--red-light);color:var(--red);}
         .vchip-s{background:var(--warn-light);color:var(--warn);}
         .vchip-f{background:#eef3fa;color:var(--blue);}
-
-        /* totals box */
-        .rtots{display:flex;gap:0;margin-top:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+        .rtots{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:20px;}
         .rto{flex:1;padding:14px 12px;text-align:center;border-right:1px solid var(--border);}
         .rto:last-child{border-right:none;}
         .rto-v{font-size:1.15rem;font-weight:700;}
         .rto-l{font-size:.65rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
-        .rto.accent{background:var(--accent-light);}
-        .rto.accent .rto-v{color:var(--accent);}
-        .rto.red-bg{background:var(--red-light);}
-        .rto.red-bg .rto-v{color:var(--red);}
-        .rto.blue-bg{background:var(--blue-light);}
-        .rto.blue-bg .rto-v{color:var(--blue);}
-
-        /* ═══════════════════════════
-           PRINT
-        ═══════════════════════════ */
-        @media print{
-            body{background:white;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-            .hdr,.sbar,.ctrl,#repModal,.cacts,.ctg,.ftgl{display:none !important;}
-            .elist{padding:0;gap:0;}
-
-            /* detail print */
-            .ecard{display:none !important;box-shadow:none;border:1px solid #ccc !important;border-radius:0;margin-bottom:0;page-break-after:always;}
-            .ecard.printing{display:block !important;}
-            .cb{display:block !important;}
-            .flst{display:block !important;}
-            .ch{cursor:default;background:#f5f4f0 !important;}
-            .yr.sa{background:#f7f6ff !important;}
-            .yr.sb{background:#f2faf8 !important;}
-            .yr.rexp{background:#fff3f3 !important;}
-            .yr.rsoon{background:#fffbf2 !important;}
-            .estrip{background:#ede9fd !important;}
-            .yt thead tr,.trow td{background:#1c1c2e !important;}
-            .sec-hdr.adeudo{background:#fff8f0 !important;}
-            .sec-hdr.portomar{background:#f0f7ff !important;}
-            .sec-hdr.completo{background:#d4f5ef !important;}
-
-            /* compact print: hide fecha lists */
-            .ecard.print-compact .flst{display:none !important;}
-            .ecard.print-compact .ftgl{display:none !important;}
-            .ecard.print-compact .solrow{display:none !important;}
-
-            /* report print */
-            #repPrint{display:block !important;}
-            .ecard,.elist{display:none !important;}
-        }
-
-        #repPrint{display:none;}
-
-        @media(max-width:600px){
-            .hdr,.sbar,.ctrl,.elist{padding-left:12px;padding-right:12px;}
-            .yt thead th:nth-child(2),.yt td:nth-child(2){display:none;}
-        }
+        .rto.acc{background:var(--accent-light);}.rto.acc .rto-v{color:var(--accent);}
+        .rto.red{background:var(--red-light);}.rto.red .rto-v{color:var(--red);}
+        .rto.blu{background:var(--blue-light);}.rto.blu .rto-v{color:var(--blue);}
     </style>
 </head>
 <body>
@@ -300,27 +224,20 @@
     <div class="elist" id="eList"></div>
 </div>
 
-<!-- REPORT MODAL -->
 <div id="repModal">
     <div class="mbox">
         <div class="mhdr">
             <h2>📊 Reporte de Vacaciones · Paz Mental S.A.P.I. de C.V.</h2>
             <button class="mclose" onclick="closeReport()">✕ Cerrar</button>
         </div>
-        <div class="macts">
-            <button class="pbtn pbtn-dark" onclick="printReport()">🖨 Imprimir / PDF</button>
-        </div>
+        <div class="macts"><button class="pbtn pbtn-dark" onclick="printReport()">🖨 Imprimir / PDF</button></div>
         <div class="rwrap" id="repContent"></div>
     </div>
 </div>
 
-<!-- hidden report print area -->
-<div id="repPrint"></div>
-
 <script>
 const SHEET_ID='1LspktCHoVlK4QDGY6-gB162B5Y2BBJxS6IlCBPiClv8';
 let emps=[],vacs=[],curFilter='todos';
-
 const tV={1:6,2:8,3:10,4:12,5:14,6:14,7:14,8:14,9:14,10:16,11:16,12:16,13:16,14:16,15:18};
 const tN={1:12,2:14,3:16,4:18,5:20,6:22,7:22,8:22,9:22,10:22,11:24,12:24,13:24,14:24,15:24};
 const c23=new Date(2023,0,1);
@@ -340,7 +257,6 @@ function ini(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase
 function money(n){return'$'+n.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function getDias(ing,anio){const ap=new Date(ing);ap.setFullYear(ing.getFullYear()+anio);const t=ap<c23?tV:tN;return t[Math.min(anio,15)]||(ap<c23?18:24);}
 
-/* ── CORE CALC ── */
 function calcular(emp){
     const hoy=new Date(),ing=emp.fi;
     if(!ing)return[];
@@ -362,40 +278,36 @@ function calcular(emp){
         const pend=Math.max(0,dt-us);
         let venc=null,dpv=null,ev='completo';
         if(pend>0){
-            if(ap.getFullYear()>=2025){
-                venc=ci;dpv=Math.ceil((ci-new Date())/86400000);
-                ev=dpv<0?'exp':dpv<=30?'soon':'fut';
-            }else ev='nv';
+            if(ap.getFullYear()>=2025){venc=ci;dpv=Math.ceil((ci-new Date())/86400000);ev=dpv<0?'exp':dpv<=30?'soon':'fut';}
+            else ev='nv';
         }
         res.push({anio,ap,ci,dt,dd,dp,dsf,us,pend,detD,detS,hayP,haySF,venc,dpv,ev});
     }
     return res;
 }
 
-/* ── RENDER ALL ── */
 function renderAll(){
     const list=document.getElementById('eList');list.innerHTML='';
-    let tP=0,tV2=0,tS=0,tOk=0,tSol=0;
+    let tP=0,tVn=0,tS=0,tOk=0,tSol=0;
     emps.forEach(emp=>{
         const per=calcular(emp);
         const pend=per.reduce((s,p)=>s+p.pend,0);
         const tv=per.some(p=>p.ev==='exp'&&p.pend>0);
         const ts=per.some(p=>p.ev==='soon'&&p.pend>0);
         const tsol=per.some(p=>p.detS.length>0);
-        if(pend>0)tP++;if(tv)tV2++;if(ts)tS++;if(pend===0)tOk++;if(tsol)tSol++;
+        if(pend>0)tP++;if(tv)tVn++;if(ts)tS++;if(pend===0)tOk++;if(tsol)tSol++;
         list.appendChild(buildCard(emp,per,pend,tv,ts,tsol));
     });
     document.getElementById('sBar').innerHTML=`
         <div class="sp"><div class="sd" style="background:var(--ink)"></div><span><strong>${emps.length}</strong> empleados</span></div>
         <div class="sp"><div class="sd" style="background:var(--accent)"></div><span><strong>${tP}</strong> con pendientes</span></div>
-        <div class="sp"><div class="sd" style="background:var(--red)"></div><span><strong>${tV2}</strong> vencidos</span></div>
+        <div class="sp"><div class="sd" style="background:var(--red)"></div><span><strong>${tVn}</strong> vencidos</span></div>
         <div class="sp"><div class="sd" style="background:var(--warn)"></div><span><strong>${tS}</strong> vencen pronto</span></div>
         <div class="sp"><div class="sd" style="background:var(--blue)"></div><span><strong>${tSol}</strong> solicitados</span></div>
         <div class="sp"><div class="sd" style="background:var(--ok)"></div><span><strong>${tOk}</strong> al corriente</span></div>`;
     document.getElementById('lastUpd').textContent='Actualizado: '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
 }
 
-/* ── BUILD CARD ── */
 function buildCard(emp,per,pend,tv,ts,tsol){
     const card=document.createElement('div');
     card.className='ecard'+(tv?' has-exp':ts?' has-soon':'');
@@ -408,115 +320,107 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     const gPorTomar=per.filter(p=>['exp','soon','fut'].includes(p.ev)&&p.pend>0);
     const diasAdeudo=gAdeudo.reduce((s,p)=>s+p.pend,0);
     const diasPorTomar=gPorTomar.reduce((s,p)=>s+p.pend,0);
-    const vd=diasAdeudo*emp.sd, pr=vd*.25, tot=vd+pr;
-    const vdPT=diasPorTomar*emp.sd, prPT=vdPT*.25, totPT=vdPT+prPT;
+    const vd=diasAdeudo*emp.sd,pr=vd*.25,tot=vd+pr;
+    const vdPT=diasPorTomar*emp.sd,prPT=vdPT*.25,totPT=vdPT+prPT;
     const totGlobal=tot+totPT;
 
     const proxVenc=gPorTomar.filter(p=>p.venc).sort((a,b)=>a.venc-b.venc)[0];
     const proxVencFmt=proxVenc?fmtFull(proxVenc.venc):'sin fecha de vencimiento registrada';
-    const diasSolicitados=per.reduce((s,p)=>s+p.detS.length,0);
-    const totalPendComun=pend-diasSolicitados;
-    const diasPorTomarComun=Math.max(0,diasPorTomar-gPorTomar.reduce((s,p)=>s+p.detS.length,0));
+    const diasSol=per.reduce((s,p)=>s+p.detS.length,0);
+    const totalPendComun=Math.max(0,pend-diasSol);
+    const diasPTComun=Math.max(0,diasPorTomar-gPorTomar.reduce((s,p)=>s+p.detS.length,0));
 
     let bdgs='';
     if(pend>0)bdgs+=`<span class="bdg bdg-p">${pend} pend.</span>`;
-    if(tv)bdgs+=`<span class="bdg bdg-e">&#x26A0; Vencidos</span>`;
-    else if(ts)bdgs+=`<span class="bdg bdg-s">&#x23F0; Pronto</span>`;
-    if(tsol)bdgs+=`<span class="bdg bdg-sol">&#x1F4CB; Solicitados</span>`;
-    if(pend===0&&!tsol)bdgs+=`<span class="bdg bdg-ok">&#x2713; Al corriente</span>`;
+    if(tv)bdgs+=`<span class="bdg bdg-e">⚠ Vencidos</span>`;
+    else if(ts)bdgs+=`<span class="bdg bdg-s">⏰ Pronto</span>`;
+    if(tsol)bdgs+=`<span class="bdg bdg-sol">📋 Solicitados</span>`;
+    if(pend===0&&!tsol)bdgs+=`<span class="bdg bdg-ok">✓ Al corriente</span>`;
 
-    // ALL years sorted, one flat table, NO separation
-    const compId=`comp-${emp.num}`;
+    // ALL years sorted, ONE flat table, NO separation
     const sorted=[...per].sort((a,b)=>a.anio-b.anio);
     let tbody='';
-
     sorted.forEach((p,i)=>{
         const pct=p.dt>0?Math.round(p.us/p.dt*100):100;
         const fc=pct>=100?'f-ok':'f-pt';
         const rc=p.ev==='exp'&&p.pend>0?'rexp':p.ev==='soon'&&p.pend>0?'rsoon':i%2===0?'sa':'sb';
-
         let uHtml='';
-        if(p.hayP) uHtml=`<span class="dc-done">Todos pagados</span>`;
-        else if(p.haySF) uHtml=`<span class="dc-done">Sin fecha registrada</span>`;
+        if(p.hayP)uHtml=`<span class="dc-done">Todos pagados</span>`;
+        else if(p.haySF)uHtml=`<span class="dc-done">Sin fecha registrada</span>`;
         else if(p.detD.length>0){
             const id=`d-${emp.num}-${p.anio}`;
             const lst=p.detD.map((d,idx)=>{const{dia,fecha}=fmtDia(d);return`<div class="fi"><span class="fn">${idx+1}.</span><span class="fdia">${dia}</span><span class="fdate">${fecha}</span></div>`;}).join('');
-            uHtml=`<button class="ftgl" onclick="tgF('${id}')">&#x1F4C5; ${p.detD.length} fecha${p.detD.length>1?'s':''} &#x25BE;</button><div class="flst" id="${id}">${lst}</div>`;
-        } else uHtml=`<span style="color:var(--ink-muted)">&#x2014;</span>`;
-
+            uHtml=`<button class="ftgl" onclick="tgF('${id}')">📅 ${p.detD.length} fecha${p.detD.length>1?'s':''} ▾</button><div class="flst" id="${id}">${lst}</div>`;
+        }else uHtml=`<span style="color:var(--ink-muted)">—</span>`;
         let vChip='';
-        if(p.pend===0) vChip='';
-        else if(p.ev==='nv') vChip=`<span class="vc vc-nv">Sin vencimiento</span>`;
-        else if(p.ev==='exp') vChip=`<span class="vc vc-exp">&#x26A0; Venci&#xF3; ${fmt(p.venc)}</span>`;
-        else if(p.ev==='soon') vChip=`<span class="vc vc-soon">&#x23F0; ${p.dpv}d &middot; ${fmt(p.venc)}</span>`;
-        else if(p.ev==='fut') vChip=`<span class="vc vc-fut">${fmt(p.venc)}</span>`;
-
+        if(p.pend===0)vChip='';
+        else if(p.ev==='nv')vChip=`<span class="vc vc-nv">Sin vencimiento</span>`;
+        else if(p.ev==='exp')vChip=`<span class="vc vc-exp">⚠ Venció ${fmt(p.venc)}</span>`;
+        else if(p.ev==='soon')vChip=`<span class="vc vc-soon">⏰ ${p.dpv}d · ${fmt(p.venc)}</span>`;
+        else if(p.ev==='fut')vChip=`<span class="vc vc-fut">${fmt(p.venc)}</span>`;
         tbody+=`<tr class="yr ${rc}">
-            <td><div class="yn">A&#xF1;o ${p.anio}</div><div class="yd">${fmt(p.ap,true)} &#x2192; ${fmt(p.ci,true)}</div></td>
+            <td><div class="yn">Año ${p.anio}</div><div class="yd">${fmt(p.ap,true)} → ${fmt(p.ci,true)}</div></td>
             <td class="c" style="font-weight:600">${p.dt}</td>
             <td><div class="uct">${p.us} / ${p.dt}</div><div class="mbar"><div class="mfill ${fc}" style="width:${pct}%"></div></div><div class="usub">${uHtml}</div></td>
             <td class="c"><span class="pn ${p.pend>0?'y':'n'}">${p.pend}</span></td>
             <td>${vChip}</td>
         </tr>`;
-
         if(p.detS.length>0){
             const sid=`s-${emp.num}-${p.anio}`;
             const slst=p.detS.map((d,idx)=>{const{dia,fecha}=fmtDia(d);return`<div class="fi sol"><span class="fn">${idx+1}.</span><span class="fdia">${dia}</span><span class="fdate">${fecha}</span></div>`;}).join('');
-            tbody+=`<tr class="solrow"><td colspan="5">&#x1F4CB; <strong>${p.detS.length} d&#xED;a${p.detS.length>1?'s':''} solicitados, pendientes de tomar</strong> <button class="ftgl" style="margin-left:6px" onclick="tgF('${sid}')">Ver fechas &#x25BE;</button><div class="flst" id="${sid}">${slst}</div></td></tr>`;
+            tbody+=`<tr class="solrow"><td colspan="5">📋 <strong>${p.detS.length} día${p.detS.length>1?'s':''} solicitados, pendientes de tomar</strong> <button class="ftgl" style="margin-left:6px" onclick="tgF('${sid}')">Ver fechas ▾</button><div class="flst" id="${sid}">${slst}</div></td></tr>`;
         }
     });
 
-    const thead=`<thead><tr><th>Periodo</th><th class="c">D&#xED;as</th><th>Usados / Detalle</th><th class="c">Pend.</th><th>Vencimiento</th></tr></thead>`;
+    const thead=`<thead><tr><th>Periodo</th><th class="c">Días</th><th>Usados / Detalle</th><th class="c">Pend.</th><th>Vencimiento</th></tr></thead>`;
     const bodyHTML=`<table class="yt">${thead}<tbody>${tbody}</tbody>
         <tfoot><tr class="trow"><td>TOTAL</td><td class="c">${per.reduce((s,p)=>s+p.dt,0)}</td>
-        <td>${per.reduce((s,p)=>s+p.us,0)} usados</td>
-        <td class="c">${per.reduce((s,p)=>s+p.pend,0)}</td><td></td></tr></tfoot>
+        <td>${per.reduce((s,p)=>s+p.us,0)} usados</td><td class="c">${pend}</td><td></td></tr></tfoot>
     </table>`;
 
     card.innerHTML=`
     <div class="ch" onclick="tgCard(this)">
         <div class="av">${ini(emp.nombre)}</div>
-        <div class="cn"><strong>${emp.nombre}</strong><span>#${emp.num} &middot; ${emp.eq||'Sin equipo'} &middot; ${anios} a&#xF1;os antig&#xFC;edad vacacional</span></div>
+        <div class="cn"><strong>${emp.nombre}</strong><span>#${emp.num} · ${emp.eq||'Sin equipo'} · ${anios} años antigüedad vacacional</span></div>
         <div class="cbdgs">${bdgs}</div>
-        <span class="ctg">&#x25BC;</span>
+        <span class="ctg">▼</span>
     </div>
     <div class="cb">
         <div class="estrip">
             <div class="strip-left">
                 <div class="ei"><span class="eilbl">Ingreso</span><span class="eival">${fmtFull(emp.fi)}</span></div>
-                <div class="ei"><span class="eilbl">Antig&#xFC;edad vacacional</span><span class="eival">${anios} a&#xF1;os</span></div>
+                <div class="ei"><span class="eilbl">Antigüedad vacacional</span><span class="eival">${anios} años</span></div>
                 <div class="ei"><span class="eilbl">Salario diario</span><span class="eival">${money(emp.sd)}</span></div>
             </div>
             <div class="strip-right">
                 <div class="strip-row strip-warn">
-                    <div class="ei"><span class="eilbl warn-lbl">&#x1F4B0; D&#xED;as adeudo</span><span class="eival hi">${diasAdeudo}</span></div>
-                    <div class="ei"><span class="eilbl warn-lbl">Valor d&#xED;as</span><span class="eival">${money(vd)}</span></div>
+                    <div class="ei"><span class="eilbl warn-lbl">💰 Días adeudo</span><span class="eival hi">${diasAdeudo}</span></div>
+                    <div class="ei"><span class="eilbl warn-lbl">Valor días</span><span class="eival">${money(vd)}</span></div>
                     <div class="ei"><span class="eilbl warn-lbl">Prima 25%</span><span class="eival">${money(pr)}</span></div>
                     <div class="ei"><span class="eilbl warn-lbl">Pasivo real</span><span class="eival hi">${money(tot)}</span></div>
                 </div>
                 <div class="strip-row strip-blue">
-                    <div class="ei"><span class="eilbl blue-lbl">&#x1F4C5; D&#xED;as por tomar</span><span class="eival" style="color:var(--blue)">${diasPorTomar}</span></div>
+                    <div class="ei"><span class="eilbl blue-lbl">📅 Días por tomar</span><span class="eival" style="color:var(--blue)">${diasPorTomar}</span></div>
                     <div class="ei"><span class="eilbl blue-lbl">Valor (ref.)</span><span class="eival">${money(vdPT)}</span></div>
                     <div class="ei"><span class="eilbl blue-lbl">Prima (ref.)</span><span class="eival">${money(prPT)}</span></div>
                     <div class="ei"><span class="eilbl blue-lbl">Total ref.</span><span class="eival" style="color:var(--blue)">${money(totPT)}</span></div>
                 </div>
             </div>
             <div class="strip-total">
-                <span class="eilbl" style="color:var(--accent)">&#x3A3; Total combinado</span>
+                <span class="eilbl" style="color:var(--accent)">Σ Total combinado</span>
                 <span class="eival hi" style="font-size:1rem">${money(totGlobal)}</span>
             </div>
         </div>
         ${bodyHTML}
         <div class="cacts">
-            <button class="pbtn pbtn-outline" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',true)">&#x1F5A8; Compacto</button>
-            <button class="pbtn pbtn-dark" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',false)">&#x1F5A8; Con detalle</button>
-            <button class="pbtn pbtn-com" onclick="abrirComunicado('${emp.nombre.replace(/'/g,"\\'")}','${emp.num}',${totalPendComun},'${proxVencFmt}',${diasPorTomarComun})">&#x1F4DC; Comunicado</button>
+            <button class="pbtn pbtn-outline" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',true)">🖨 Compacto</button>
+            <button class="pbtn pbtn-dark" onclick="printEmp('${emp.nombre.replace(/'/g,"\\'")}',false)">🖨 Con detalle</button>
+            <button class="pbtn pbtn-com" onclick="abrirComunicado('${emp.nombre.replace(/'/g,"\\'")}','${emp.num}',${totalPendComun},'${proxVencFmt}',${diasPTComun})">📜 Comunicado</button>
         </div>
     </div>`;
     return card;
 }
 
-/* ── TOGGLES ── */
 function tgF(id){
     const el=document.getElementById(id);if(!el)return;
     const op=el.classList.toggle('open');
@@ -527,15 +431,6 @@ function tgCard(ch){
     const cb=ch.nextElementSibling,tg=ch.querySelector('.ctg');
     cb.classList.toggle('open');tg.classList.toggle('open',cb.classList.contains('open'));
 }
-function tgComp2(empNum,compId){
-    const rows=document.querySelectorAll(`[data-cid="${empNum}"]`);
-    const arr=document.getElementById('arrtxt-'+compId);
-    const isHidden=rows.length>0&&rows[0].style.display==='none';
-    rows.forEach(r=>r.style.display=isHidden?'':'none');
-    if(arr)arr.textContent=isHidden?'▴ Ocultar':'▼ Ver';
-}
-
-/* ── FILTERS ── */
 function setFilter(f,btn){
     curFilter=f;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');filterCards();
@@ -553,7 +448,6 @@ function filterCards(){
     });
 }
 
-/* ── PRINT EMPLOYEE - opens new window, never touches screen ── */
 function printEmp(nombre,compact){
     const target=[...document.querySelectorAll('.ecard')].find(c=>c.dataset.n===nombre.toLowerCase());
     if(!target)return;
@@ -561,7 +455,7 @@ function printEmp(nombre,compact){
     cardClone.querySelector('.cb').classList.add('open');
     cardClone.querySelectorAll('.cacts').forEach(e=>e.remove());
     cardClone.querySelectorAll('.ctg').forEach(e=>e.remove());
-    if(!compact) cardClone.querySelectorAll('.flst').forEach(fl=>fl.classList.add('open'));
+    if(!compact)cardClone.querySelectorAll('.flst').forEach(fl=>fl.classList.add('open'));
     if(compact){
         cardClone.querySelectorAll('.flst').forEach(fl=>fl.remove());
         cardClone.querySelectorAll('.ftgl').forEach(b=>b.remove());
@@ -570,397 +464,214 @@ function printEmp(nombre,compact){
     const empName=target.querySelector('.cn strong').textContent;
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=960,height=760');
-    win.document.write(`<!DOCTYPE html><html lang="es"><head>
-    <meta charset="UTF-8"><title>Vacaciones \u00b7 ${empName}</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'DM Sans',sans-serif;font-size:10.5px;color:#1c1c2e;padding:18px 22px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-        .print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #1c1c2e;}
-        .print-hdr h1{font-family:'DM Serif Display',serif;font-size:1rem;}
-        .print-hdr small{font-size:.68rem;color:#52526e;}
-        .print-date{font-size:.68rem;color:#9898b8;}
-        /* card */
-        .ecard{border:1px solid #ddd;border-radius:6px;overflow:hidden;}
-        .ch{padding:8px 12px;display:flex;align-items:center;gap:8px;background:#f5f4f0;}
-        .av{width:28px;height:28px;border-radius:50%;background:#1c1c2e;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:.75rem;flex-shrink:0;}
-        .cn strong{font-size:.85rem;}
-        .cn span{font-size:.65rem;color:#9898b8;}
-        .cbdgs{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
-        .bdg{padding:1px 6px;border-radius:8px;font-size:.62rem;font-weight:500;}
-        .bdg-p{background:#ede9fd;color:#6c5ce7;}.bdg-e{background:#fde8e8;color:#a61c1c;}
-        .bdg-s{background:#fdecd4;color:#b86200;}.bdg-sol{background:#dceeff;color:#1a6fb5;}
-        .bdg-ok{background:#d4f5ef;color:#00836e;}
-        .cb{display:block!important;border-top:1px solid #ddd;}
-        /* strip: compact grid for print */
-        .estrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));border-bottom:1px solid #ddd;}
-        .strip-left,.strip-right,.strip-total{display:contents;}
-        .strip-row{display:contents;}
-        .ei{padding:5px 10px;border-right:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;}
-        .strip-warn .ei{background:#fff8f0!important;}
-        .strip-blue .ei{background:#f0f7ff!important;}
-        .strip-total{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ede9fd!important;padding:5px 10px;border-right:none!important;}
-        .eilbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.06em;color:#9898b8;display:block;margin-bottom:1px;}
-        .eival{font-size:.78rem;font-weight:600;}
-        .eival.hi{color:#6c5ce7;}
-        .warn-lbl{color:#b86200!important;}
-        .blue-lbl{color:#1a6fb5!important;}
-        /* table */
-        .yt{width:100%;border-collapse:collapse;margin-top:0;}
-        .yt thead tr{background:#1c1c2e!important;color:#fff;}
-        .yt thead th{padding:4px 8px;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;text-align:left;}
-        .yt thead th.c{text-align:center;}
-        .yr{border-bottom:1px solid #e8e8e8;}
-        .yr.sa{background:#f7f6ff!important;}.yr.sb{background:#f2faf8!important;}
-        .yr.rexp{background:#fff3f3!important;}.yr.rsoon{background:#fffbf2!important;}
-        .yt td{padding:4px 8px;vertical-align:middle;font-size:.72rem;}
-        .yt td.c{text-align:center;}
-        .yn{font-weight:700;font-size:.78rem;}
-        .yd{font-size:.6rem;color:#9898b8;margin-top:1px;}
-        .mbar{height:3px;background:#e2e0f0;border-radius:3px;overflow:hidden;width:50px;margin-top:2px;}
-        .mfill{height:100%;border-radius:3px;}
-        .f-ok{background:#00836e;}.f-pt{background:#6c5ce7;}
-        .uct{font-size:.72rem;font-weight:600;}
-        .usub{font-size:.6rem;color:#9898b8;margin-top:1px;}
-        .pn{font-size:.82rem;font-weight:700;}
-        .pn.y{color:#6c5ce7;}.pn.n{color:#00836e;}
-        .dc-done{display:inline-block;background:#d4f5ef;color:#00836e;padding:1px 5px;border-radius:6px;font-size:.6rem;font-weight:500;}
-        .vc{display:inline-flex;align-items:center;padding:1px 6px;border-radius:8px;font-size:.62rem;font-weight:500;}
-        .vc-nv{background:#f0f0f8;color:#52526e;}.vc-exp{background:#fde8e8;color:#a61c1c;font-weight:700;}
-        .vc-soon{background:#fdecd4;color:#b86200;font-weight:700;}.vc-fut{background:#eef3fa;color:#1a6fb5;}
-        .solrow td{background:#f0f7ff!important;border-top:1px dashed #b8d4f0;font-size:.66rem;color:#1a6fb5;padding:3px 8px;}
-        .trow td{background:#1c1c2e!important;color:#fff;font-weight:600;font-size:.72rem;padding:4px 8px;}
-        .trow td.c{text-align:center;}
-        .sec-hdr{padding:4px 10px;font-size:.6rem;font-weight:600;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
-        .sec-hdr.completo{background:#d4f5ef!important;color:#00836e;border-bottom:1px solid #b0e8d8;}
-        .sec-badge{background:rgba(0,0,0,.08);padding:1px 6px;border-radius:8px;font-size:.58rem;}
-        .flst{display:block;margin-top:3px;border-left:2px solid #e2e0f0;padding-left:5px;}
-        .fi{font-size:.64rem;padding:1px 0;color:#52526e;border-bottom:1px solid #f0eef8;display:flex;gap:4px;}
-        .fi:last-child{border-bottom:none;}
-        .fn{font-weight:600;color:#1c1c2e;min-width:12px;text-align:right;}
-        .fdia{color:#9898b8;min-width:44px;}.fdate{color:#1c1c2e;}
-        .fi.sol .fdia{color:#6da8e0;}.fi.sol .fdate{color:#1a6fb5;}
-        .ftgl{display:none;}
-        @media print{body{padding:10px 14px;}}
-    </style></head><body>
-    <div class="print-hdr">
-        <div><h1>Constancia de Vacaciones</h1><small>Paz Mental S.A.P.I. de C.V.</small></div>
-        <div class="print-date">${today}</div>
-    </div>
-    ${cardClone.outerHTML}
-    <script>window.onload=()=>{window.print();}<\/script>
-    </body></html>`);
+    win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Vacaciones \u00b7 '+empName+'<\/title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">'
+    +'<style>'
+    +'*{margin:0;padding:0;box-sizing:border-box;}'
+    +'body{font-family:\'DM Sans\',sans-serif;font-size:10.5px;color:#1c1c2e;padding:18px 22px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #1c1c2e;}'
+    +'.print-hdr h1{font-family:\'DM Serif Display\',serif;font-size:1rem;}'
+    +'.print-hdr small{font-size:.68rem;color:#52526e;}'
+    +'.ecard{border:1px solid #ddd;border-radius:6px;overflow:hidden;}'
+    +'.ch{padding:8px 12px;display:flex;align-items:center;gap:8px;background:#f5f4f0;}'
+    +'.av{width:28px;height:28px;border-radius:50%;background:#1c1c2e;color:#fff;display:flex;align-items:center;justify-content:center;font-family:\'DM Serif Display\',serif;font-size:.75rem;flex-shrink:0;}'
+    +'.cn strong{font-size:.85rem;}.cn span{font-size:.65rem;color:#9898b8;}'
+    +'.cbdgs{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}'
+    +'.bdg{padding:1px 6px;border-radius:8px;font-size:.62rem;font-weight:500;}'
+    +'.bdg-p{background:#ede9fd;color:#6c5ce7;}.bdg-e{background:#fde8e8;color:#a61c1c;}.bdg-s{background:#fdecd4;color:#b86200;}.bdg-sol{background:#dceeff;color:#1a6fb5;}.bdg-ok{background:#d4f5ef;color:#00836e;}'
+    +'.cb{display:block!important;border-top:1px solid #ddd;}'
+    +'.estrip{display:flex;align-items:stretch;border-bottom:1px solid #ddd;}'
+    +'.strip-left{display:flex;flex-direction:column;border-right:2px solid #ddd;flex-shrink:0;}'
+    +'.strip-left .ei{border-bottom:1px solid #e8e8e8;border-right:none;flex:1;min-width:100px;}'
+    +'.strip-left .ei:last-child{border-bottom:none;}'
+    +'.strip-right{display:flex;flex-direction:column;flex:1;}'
+    +'.strip-row{display:flex;flex:1;}'
+    +'.strip-row .ei{flex:1;min-width:70px;}'
+    +'.strip-warn{background:#fff8f0;border-bottom:1px solid #f5dfc0;}'
+    +'.strip-blue{background:#f0f7ff;}'
+    +'.strip-total{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 12px;background:#ede9fd;border-left:2px solid #ddd;flex-shrink:0;min-width:100px;gap:3px;}'
+    +'.ei{padding:5px 8px;border-right:1px solid #e8e8e8;}'
+    +'.ei:last-child{border-right:none;}'
+    +'.eilbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.06em;color:#9898b8;display:block;margin-bottom:1px;}'
+    +'.eival{font-size:.75rem;font-weight:600;}.eival.hi{color:#6c5ce7;}'
+    +'.warn-lbl{color:#b86200!important;}.blue-lbl{color:#1a6fb5!important;}'
+    +'.yt{width:100%;border-collapse:collapse;}'
+    +'.yt thead tr{background:#1c1c2e!important;color:#fff;}'
+    +'.yt thead th{padding:4px 7px;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;text-align:left;}'
+    +'.yt thead th.c{text-align:center;}'
+    +'.yr{border-bottom:1px solid #e8e8e8;}'
+    +'.yr.sa{background:#f7f6ff!important;}.yr.sb{background:#f2faf8!important;}'
+    +'.yr.rexp{background:#fff3f3!important;}.yr.rsoon{background:#fffbf2!important;}'
+    +'.yt td{padding:4px 7px;vertical-align:middle;font-size:.7rem;}'
+    +'.yt td.c{text-align:center;}'
+    +'.yn{font-weight:700;font-size:.75rem;}.yd{font-size:.6rem;color:#9898b8;margin-top:1px;}'
+    +'.mbar{height:3px;background:#e2e0f0;border-radius:3px;overflow:hidden;width:50px;margin-top:2px;}'
+    +'.mfill{height:100%;border-radius:3px;}.f-ok{background:#00836e;}.f-pt{background:#6c5ce7;}'
+    +'.uct{font-size:.7rem;font-weight:600;}.usub{font-size:.6rem;color:#9898b8;margin-top:1px;}'
+    +'.pn{font-size:.82rem;font-weight:700;}.pn.y{color:#6c5ce7;}.pn.n{color:#00836e;}'
+    +'.dc-done{display:inline-block;background:#d4f5ef;color:#00836e;padding:1px 5px;border-radius:6px;font-size:.6rem;font-weight:500;}'
+    +'.vc{display:inline-flex;padding:1px 6px;border-radius:8px;font-size:.62rem;font-weight:500;}'
+    +'.vc-nv{background:#f0f0f8;color:#52526e;}.vc-exp{background:#fde8e8;color:#a61c1c;font-weight:700;}.vc-soon{background:#fdecd4;color:#b86200;font-weight:700;}.vc-fut{background:#eef3fa;color:#1a6fb5;}'
+    +'.solrow td{background:#f0f7ff!important;border-top:1px dashed #b8d4f0;font-size:.66rem;color:#1a6fb5;padding:3px 7px;}'
+    +'.trow td{background:#1c1c2e!important;color:#fff;font-weight:600;font-size:.7rem;padding:4px 7px;}'
+    +'.trow td.c{text-align:center;}'
+    +'.flst{display:block;margin-top:3px;border-left:2px solid #e2e0f0;padding-left:5px;}'
+    +'.fi{font-size:.63rem;padding:1px 0;color:#52526e;border-bottom:1px solid #f0eef8;display:flex;gap:4px;}'
+    +'.fi:last-child{border-bottom:none;}.fn{font-weight:600;color:#1c1c2e;min-width:12px;text-align:right;}.fdia{color:#9898b8;min-width:42px;}.fdate{color:#1c1c2e;}'
+    +'.fi.sol .fdia{color:#6da8e0;}.fi.sol .fdate{color:#1a6fb5;}'
+    +'.ftgl{display:none;}'
+    +'<\/style><\/head><body>'
+    +'<div class="print-hdr"><div><h1>Constancia de Vacaciones<\/h1><small>Paz Mental S.A.P.I. de C.V.<\/small><\/div><div style="font-size:.68rem;color:#9898b8;">'+today+'<\/div><\/div>'
+    +cardClone.outerHTML
+    +'<script>window.onload=function(){window.print();};<\/script>'
+    +'<\/body><\/html>');
     win.document.close();
 }
 
-    const empName=target.querySelector('.cn strong').textContent;
-    const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-
-    const win=window.open('','_blank','width=900,height=700');
-    win.document.write(`<!DOCTYPE html><html lang="es"><head>
-    <meta charset="UTF-8">
-    <title>Vacaciones · ${empName}</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'DM Sans',sans-serif;font-size:11px;color:#1c1c2e;padding:20px 24px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-        .print-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #1c1c2e;}
-        .print-header h1{font-family:'DM Serif Display',serif;font-size:1.1rem;}
-        .print-header small{font-size:.72rem;color:#52526e;}
-        .print-meta{font-size:.72rem;color:#9898b8;text-align:right;}
-        .ecard{border:1px solid #e2e0f0;border-radius:8px;overflow:hidden;}
-        .ch{padding:10px 14px;display:flex;align-items:center;gap:10px;background:#f5f4f0;}
-        .av{width:30px;height:30px;border-radius:50%;background:#1c1c2e;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:.8rem;flex-shrink:0;}
-        .cn strong{font-size:.9rem;display:block;}
-        .cn span{font-size:.68rem;color:#9898b8;}
-        .cbdgs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto;}
-        .bdg{padding:2px 7px;border-radius:9px;font-size:.65rem;font-weight:500;}
-        .bdg-p{background:#ede9fd;color:#6c5ce7;}
-        .bdg-e{background:#fde8e8;color:#a61c1c;}
-        .bdg-s{background:#fdecd4;color:#b86200;}
-        .bdg-sol{background:#dceeff;color:#1a6fb5;}
-        .bdg-ok{background:#d4f5ef;color:#00836e;}
-        .cb{display:block;border-top:1px solid #e2e0f0;}
-        .estrip{display:flex;flex-wrap:wrap;background:#f0edff;border-bottom:1px solid #e2e0f0;}
-        .ei{padding:6px 12px;border-right:1px solid #e2e0f0;flex:1;min-width:100px;}
-        .ei:last-child{border-right:none;}
-        .eilbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.07em;color:#9898b8;display:block;margin-bottom:1px;}
-        .eival{font-size:.8rem;font-weight:600;}
-        .eival.hi{color:#6c5ce7;}
-        .yt{width:100%;border-collapse:collapse;}
-        .yt thead tr{background:#1c1c2e;color:#fff;}
-        .yt thead th{padding:5px 9px;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;text-align:left;}
-        .yt thead th.c{text-align:center;}
-        .yr{border-bottom:1px solid #e2e0f0;}
-        .yr.sa{background:#f7f6ff;}
-        .yr.sb{background:#f2faf8;}
-        .yr.rexp{background:#fff3f3;}
-        .yr.rsoon{background:#fffbf2;}
-        .yt td{padding:5px 9px;vertical-align:middle;font-size:.78rem;}
-        .yt td.c{text-align:center;}
-        .yn{font-weight:700;font-size:.82rem;}
-        .yd{font-size:.62rem;color:#9898b8;margin-top:1px;}
-        .mbar{height:3px;background:#e2e0f0;border-radius:3px;overflow:hidden;width:55px;margin-top:2px;}
-        .mfill{height:100%;border-radius:3px;}
-        .f-ok{background:#00836e;}
-        .f-pt{background:#6c5ce7;}
-        .uct{font-size:.75rem;font-weight:600;}
-        .usub{font-size:.62rem;color:#9898b8;margin-top:1px;}
-        .pn{font-size:.85rem;font-weight:700;}
-        .pn.y{color:#6c5ce7;}
-        .pn.n{color:#00836e;}
-        .dc-done{display:inline-block;background:#d4f5ef;color:#00836e;padding:1px 6px;border-radius:7px;font-size:.62rem;font-weight:500;}
-        .vc{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:9px;font-size:.63rem;font-weight:500;}
-        .vc-nv{background:#f0f0f8;color:#52526e;}
-        .vc-exp{background:#fde8e8;color:#a61c1c;font-weight:700;}
-        .vc-soon{background:#fdecd4;color:#b86200;font-weight:700;}
-        .vc-fut{background:#eef3fa;color:#1a6fb5;}
-        .money-ref{font-size:.62rem;color:#9898b8;margin-top:1px;}
-        .money-ref span{color:#6c5ce7;font-weight:600;}
-        .solrow td{background:#f0f7ff;border-top:1px dashed #b8d4f0;font-size:.7rem;color:#1a6fb5;padding:4px 9px;}
-        .trow td{background:#1c1c2e;color:#fff;font-weight:600;font-size:.75rem;padding:5px 9px;}
-        .trow td.c{text-align:center;}
-        .sec-hdr{padding:5px 12px;font-size:.63rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px;}
-        .sec-hdr.adeudo{background:#fff8f0;color:#b86200;border-bottom:1px solid #f5dfc0;}
-        .sec-hdr.portomar{background:#f0f7ff;color:#1a6fb5;border-bottom:1px solid #c8dff5;}
-        .sec-hdr.completo{background:#d4f5ef;color:#00836e;border-bottom:1px solid #b0e8d8;}
-        .sec-badge{background:rgba(0,0,0,.08);padding:1px 7px;border-radius:9px;font-size:.6rem;}
-        .flst{display:block;margin-top:3px;border-left:2px solid #e2e0f0;padding-left:6px;}
-        .fi{font-size:.67rem;padding:1px 0;color:#52526e;border-bottom:1px solid #f0eef8;display:flex;gap:5px;}
-        .fi:last-child{border-bottom:none;}
-        .fn{font-weight:600;color:#1c1c2e;min-width:14px;text-align:right;}
-        .fdia{color:#9898b8;min-width:48px;}
-        .fdate{color:#1c1c2e;}
-        .fi.sol .fdia{color:#6da8e0;}
-        .fi.sol .fdate{color:#1a6fb5;}
-        .ftgl{display:none;}
-        @media print{body{padding:12px 16px;}}
-    </style>
-    </head><body>
-    <div class="print-header">
-        <div><h1>Constancia de Vacaciones</h1><small>Paz Mental S.A.P.I. de C.V.</small></div>
-        <div class="print-meta">${today}</div>
-    </div>
-    ${cardClone.outerHTML}
-    <script>window.onload=()=>{window.print();}<\/script>
-    </body></html>`);
-    win.document.close();
-}
-
-/* ══════════════════════════════
-   EXECUTIVE REPORT
-══════════════════════════════ */
 function buildReport(){
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
-    let totAdeudoDias=0,totAdeudoPesos=0,totPorTomar=0;
+    let totAD=0,totAP=0,totPT=0;
     let rows='';
-
     emps.forEach(emp=>{
-        const per=calcular(emp);
-        if(!per.length)return;
-
+        const per=calcular(emp);if(!per.length)return;
         const gA=per.filter(p=>p.ev==='nv'&&p.pend>0);
         const gP=per.filter(p=>['exp','soon','fut'].includes(p.ev)&&p.pend>0);
-
         const dA=gA.reduce((s,p)=>s+p.pend,0);
         const vdA=dA*emp.sd,prA=vdA*.25,totA=vdA+prA;
-
         const dP=gP.reduce((s,p)=>s+p.pend,0);
         const dSol=gP.reduce((s,p)=>s+p.detS.length,0);
         const dPneto=Math.max(0,dP-dSol);
-
-        totAdeudoDias+=dA;
-        totAdeudoPesos+=totA;
-        totPorTomar+=dPneto;
-
-        // vencimientos
+        totAD+=dA;totAP+=totA;totPT+=dPneto;
         let vencHTML='';
         gP.forEach(p=>{
             if(p.pend===0)return;
-            const neto=Math.max(0,p.pend-p.detS.length);
-            if(neto===0)return;
+            const neto=Math.max(0,p.pend-p.detS.length);if(neto===0)return;
             let chip=p.ev==='exp'?`<span class="vchip vchip-e">⚠ VENCIDO</span>`:
-                     p.ev==='soon'?`<span class="vchip vchip-s">⏰ ${p.dpv} días</span>`:
+                     p.ev==='soon'?`<span class="vchip vchip-s">⏰ ${p.dpv}d</span>`:
                      `<span class="vchip vchip-f">${fmt(p.venc)}</span>`;
             vencHTML+=`<div style="font-size:.72rem;margin-top:3px">Año ${p.anio}: <strong>${neto} días</strong> ${chip}</div>`;
         });
-
-        const anios=per.length;
         rows+=`<tr>
-            <td>
-                <div class="rname">${emp.nombre}</div>
-                <div class="rsub">#${emp.num} · ${emp.eq||'—'} · ${anios} años ant. vac.</div>
-            </td>
-            <td style="text-align:center">
-                ${dA>0?`<div class="pc-dias">${dA} días</div><div class="pc-total">${money(totA)}</div>`:`<span style="color:var(--ink-muted);font-size:.8rem">—</span>`}
-            </td>
-            <td style="text-align:center">
-                ${dP>0?`<div class="pt-dias">${dPneto}</div><div class="pt-sub">${dP} pendientes${dSol>0?`<br><span style="color:var(--blue)">${dSol} ya solicitados</span>`:''}</div>`:`<span style="color:var(--ink-muted);font-size:.8rem">—</span>`}
-            </td>
-            <td>${vencHTML||`<span style="color:var(--ink-muted);font-size:.75rem">Sin vencimientos próximos</span>`}</td>
+            <td><div class="rname">${emp.nombre}</div><div class="rsub">#${emp.num} · ${emp.eq||'—'} · ${per.length} años ant. vac.</div></td>
+            <td style="text-align:center">${dA>0?`<div class="pc-dias">${dA} días</div><div class="pc-total">${money(totA)}</div>`:`<span style="color:var(--ink-muted);font-size:.8rem">—</span>`}</td>
+            <td style="text-align:center">${dP>0?`<div class="pt-dias">${dPneto}</div><div class="pt-sub">${dP} pend.${dSol>0?` · <span style="color:var(--blue)">${dSol} solicitados</span>`:''}</div>`:`<span style="color:var(--ink-muted);font-size:.8rem">—</span>`}</td>
+            <td>${vencHTML||'<span style="color:var(--ink-muted);font-size:.75rem">Sin vencimientos</span>'}</td>
         </tr>`;
     });
-
-    const totValDias=totAdeudoPesos/1.25,totPrima=totAdeudoPesos-totValDias;
-
-    return `
-    <div class="rmeta">Generado el <strong>${today}</strong> &nbsp;·&nbsp; Paz Mental S.A.P.I. de C.V. &nbsp;·&nbsp; <strong>${emps.length}</strong> empleados activos</div>
-
+    const totVal=totAP/1.25,totPrima=totAP-totVal;
+    return `<div class="rmeta">Generado el <strong>${today}</strong> · Paz Mental S.A.P.I. de C.V. · <strong>${emps.length}</strong> empleados activos</div>
     <table class="rtbl">
         <thead><tr>
             <th style="width:22%">Empleado</th>
-            <th style="width:26%;text-align:center">💰 Adeudo sin vencimiento<br><span style="font-weight:300;font-size:.6rem">Días acumulados · Pasivo monetario real</span></th>
-            <th style="width:22%;text-align:center">📅 Días por tomar<br><span style="font-weight:300;font-size:.6rem">Pendientes de tomar (neto)</span></th>
-            <th style="width:30%">⏰ Vencimientos<br><span style="font-weight:300;font-size:.6rem">Fechas límite para tomar</span></th>
+            <th style="width:22%;text-align:center">💰 Adeudo sin vencimiento<br><span style="font-weight:300;font-size:.6rem">Días · Pasivo real</span></th>
+            <th style="width:20%;text-align:center">📅 Días por tomar<br><span style="font-weight:300;font-size:.6rem">Neto (menos solicitados)</span></th>
+            <th style="width:36%">⏰ Vencimientos</th>
         </tr></thead>
         <tbody>${rows}</tbody>
         <tfoot><tr>
             <td><strong>TOTALES</strong></td>
-            <td style="text-align:center"><strong>${totAdeudoDias} días · ${money(totAdeudoPesos)}</strong></td>
-            <td style="text-align:center"><strong>${totPorTomar} días por tomar</strong></td>
+            <td style="text-align:center"><strong>${totAD} días · ${money(totAP)}</strong></td>
+            <td style="text-align:center"><strong>${totPT} días por tomar</strong></td>
             <td></td>
         </tr></tfoot>
     </table>
-
     <div class="rtots">
-        <div class="rto accent"><div class="rto-v">${totAdeudoDias}</div><div class="rto-l">Días adeudados<br>sin vencimiento</div></div>
-        <div class="rto"><div class="rto-v">${money(totValDias)}</div><div class="rto-l">Valor de días<br>adeudados</div></div>
-        <div class="rto"><div class="rto-v">${money(totPrima)}</div><div class="rto-l">Prima vacacional<br>25%</div></div>
-        <div class="rto red-bg"><div class="rto-v">${money(totAdeudoPesos)}</div><div class="rto-l">Total pasivo<br>acumulado</div></div>
-        <div class="rto blue-bg"><div class="rto-v">${totPorTomar}</div><div class="rto-l">Días por tomar<br>(con vencimiento)</div></div>
+        <div class="rto acc"><div class="rto-v">${totAD}</div><div class="rto-l">Días adeudados</div></div>
+        <div class="rto"><div class="rto-v">${money(totVal)}</div><div class="rto-l">Valor días</div></div>
+        <div class="rto"><div class="rto-v">${money(totPrima)}</div><div class="rto-l">Prima 25%</div></div>
+        <div class="rto red"><div class="rto-v">${money(totAP)}</div><div class="rto-l">Total pasivo</div></div>
+        <div class="rto blu"><div class="rto-v">${totPT}</div><div class="rto-l">Días por tomar</div></div>
     </div>`;
 }
-
-function openReport(){
-    document.getElementById('repContent').innerHTML=buildReport();
-    document.getElementById('repModal').classList.add('open');
-}
+function openReport(){document.getElementById('repContent').innerHTML=buildReport();document.getElementById('repModal').classList.add('open');}
 function closeReport(){document.getElementById('repModal').classList.remove('open');}
-
 function printReport(){
     const html=document.getElementById('repContent').innerHTML;
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=1000,height=700');
-    win.document.write(`<!DOCTYPE html><html lang="es"><head>
-    <meta charset="UTF-8"><title>Reporte Vacaciones · Paz Mental</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'DM Sans',sans-serif;font-size:10px;color:#1c1c2e;padding:20px 24px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-        .print-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #1c1c2e;}
-        h1{font-family:'DM Serif Display',serif;font-size:1.2rem;}
-        .rmeta{font-size:.72rem;color:#9898b8;margin-bottom:12px;}
-        .rmeta strong{color:#1c1c2e;}
-        .rtbl{width:100%;border-collapse:collapse;font-size:.78rem;}
-        .rtbl thead tr{background:#1c1c2e;color:#fff;}
-        .rtbl thead th{padding:7px 10px;text-align:left;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;border-right:1px solid rgba(255,255,255,.1);}
-        .rtbl thead th:last-child{border-right:none;}
-        .rtbl tbody tr{border-bottom:1px solid #e2e0f0;}
-        .rtbl tbody tr:nth-child(even){background:#faf9ff;}
-        .rtbl td{padding:8px 10px;vertical-align:top;border-right:1px solid #e2e0f0;}
-        .rtbl td:last-child{border-right:none;}
-        .rtbl tfoot tr{background:#1c1c2e;color:#fff;}
-        .rtbl tfoot td{padding:7px 10px;font-weight:600;font-size:.78rem;border-right:1px solid rgba(255,255,255,.1);}
-        .rname{font-weight:600;font-size:.82rem;}
-        .rsub{font-size:.65rem;color:#9898b8;margin-top:2px;}
-        .pc-dias{font-size:1rem;font-weight:700;color:#b86200;}
-        .pc-breakdown{font-size:.65rem;color:#9898b8;margin-top:3px;line-height:1.6;}
-        .pc-total{font-size:.85rem;font-weight:700;color:#a61c1c;}
-        .pt-dias{font-size:1rem;font-weight:700;color:#1a6fb5;}
-        .pt-sub{font-size:.65rem;color:#9898b8;margin-top:3px;}
-        .vchip{display:inline-block;padding:1px 6px;border-radius:7px;font-size:.62rem;font-weight:500;margin-right:3px;}
-        .vchip-e{background:#fde8e8;color:#a61c1c;}
-        .vchip-s{background:#fdecd4;color:#b86200;}
-        .vchip-f{background:#eef3fa;color:#1a6fb5;}
-        .rtots{display:flex;gap:0;margin-top:16px;border:1px solid #e2e0f0;border-radius:8px;overflow:hidden;}
-        .rto{flex:1;padding:12px 10px;text-align:center;border-right:1px solid #e2e0f0;}
-        .rto:last-child{border-right:none;}
-        .rto-v{font-size:1rem;font-weight:700;}
-        .rto-l{font-size:.6rem;color:#9898b8;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
-        .rto.accent{background:#ede9fd;}.rto.accent .rto-v{color:#6c5ce7;}
-        .rto.red-bg{background:#fde8e8;}.rto.red-bg .rto-v{color:#a61c1c;}
-        .rto.blue-bg{background:#dceeff;}.rto.blue-bg .rto-v{color:#1a6fb5;}
-        @media print{body{padding:12px 16px;}}
-    </style></head><body>
-    <div class="print-header">
-        <div><h1>Reporte de Vacaciones</h1><small style="font-size:.78rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.</small></div>
-        <div style="font-size:.72rem;color:#9898b8;">${today}</div>
-    </div>
-    ${html}
-    <script>window.onload=()=>{window.print();}<\/script>
-    </body></html>`);
+    win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Reporte Vacaciones<\/title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;font-size:10px;color:#1c1c2e;padding:20px 24px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    +'.print-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #1c1c2e;}'
+    +'h1{font-family:\'DM Serif Display\',serif;font-size:1.2rem;}'
+    +'.rmeta{font-size:.72rem;color:#9898b8;margin-bottom:12px;}.rmeta strong{color:#1c1c2e;}'
+    +'.rtbl{width:100%;border-collapse:collapse;font-size:.78rem;}'
+    +'.rtbl thead tr{background:#1c1c2e!important;color:#fff;}'
+    +'.rtbl thead th{padding:7px 10px;text-align:left;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;font-weight:500;border-right:1px solid rgba(255,255,255,.1);}'
+    +'.rtbl tbody tr{border-bottom:1px solid #e2e0f0;}.rtbl tbody tr:nth-child(even){background:#faf9ff;}'
+    +'.rtbl td{padding:8px 10px;vertical-align:top;border-right:1px solid #e2e0f0;}.rtbl td:last-child{border-right:none;}'
+    +'.rtbl tfoot tr{background:#1c1c2e!important;color:#fff;}.rtbl tfoot td{padding:7px 10px;font-weight:600;font-size:.78rem;border-right:1px solid rgba(255,255,255,.1);}'
+    +'.rname{font-weight:600;font-size:.82rem;}.rsub{font-size:.65rem;color:#9898b8;margin-top:2px;}'
+    +'.pc-dias{font-size:1rem;font-weight:700;color:#b86200;}.pc-total{font-size:.85rem;font-weight:700;color:#a61c1c;}'
+    +'.pt-dias{font-size:1rem;font-weight:700;color:#1a6fb5;}.pt-sub{font-size:.65rem;color:#9898b8;margin-top:3px;}'
+    +'.vchip{display:inline-block;padding:1px 6px;border-radius:7px;font-size:.62rem;font-weight:500;margin-right:3px;}'
+    +'.vchip-e{background:#fde8e8;color:#a61c1c;}.vchip-s{background:#fdecd4;color:#b86200;}.vchip-f{background:#eef3fa;color:#1a6fb5;}'
+    +'.rtots{display:flex;border:1px solid #e2e0f0;border-radius:8px;overflow:hidden;margin-top:16px;}'
+    +'.rto{flex:1;padding:12px 10px;text-align:center;border-right:1px solid #e2e0f0;}.rto:last-child{border-right:none;}'
+    +'.rto-v{font-size:1rem;font-weight:700;}.rto-l{font-size:.6rem;color:#9898b8;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}'
+    +'.rto.acc{background:#ede9fd;}.rto.acc .rto-v{color:#6c5ce7;}.rto.red{background:#fde8e8;}.rto.red .rto-v{color:#a61c1c;}.rto.blu{background:#dceeff;}.rto.blu .rto-v{color:#1a6fb5;}'
+    +'<\/style><\/head><body>'
+    +'<div class="print-hdr"><div><h1>Reporte de Vacaciones<\/h1><small style="font-size:.78rem;color:#52526e;">Paz Mental S.A.P.I. de C.V.<\/small><\/div><div style="font-size:.72rem;color:#9898b8;">'+today+'<\/div><\/div>'
+    +html
+    +'<script>window.onload=function(){window.print();};<\/script><\/body><\/html>');
     win.document.close();
 }
 
-/* ── COMUNICADO ── */
 function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar){
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=820,height=700');
-    win.document.write(`<!DOCTYPE html><html lang="es"><head>
-    <meta charset="UTF-8"><title>Comunicado \u00b7 ${nombre}</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'DM Sans',sans-serif;font-size:11.5px;color:#1a1a1a;background:white;}
-        .page{max-width:720px;margin:0 auto;padding:48px 56px;}
-        .logo-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:14px;border-bottom:2px solid #1c1c2e;}
-        .company{font-family:'EB Garamond',serif;font-size:1.3rem;font-weight:600;color:#1c1c2e;}
-        .company small{display:block;font-size:.7rem;font-weight:400;color:#777;font-family:'DM Sans',sans-serif;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}
-        .doc-meta{text-align:right;font-size:.72rem;color:#888;line-height:1.7;}
-        .doc-meta strong{color:#1c1c2e;display:block;font-size:.8rem;}
-        .subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:20px 0 24px;border-radius:0 6px 6px 0;}
-        .subject-box p{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
-        .subject-box strong{font-size:.88rem;color:#1c1c2e;}
-        .saludo{font-size:1rem;margin-bottom:16px;font-family:'EB Garamond',serif;}
-        .body-text{font-size:.92rem;line-height:1.9;color:#2a2a2a;font-family:'EB Garamond',serif;text-align:justify;}
-        .body-text p{margin-bottom:14px;}
-        .highlight{background:#fff8f0;border:1px solid #f5dfc0;border-radius:6px;padding:12px 20px;margin:16px 0;display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:center;}
-        .hl-item{text-align:center;padding:0 12px;}
-        .hl-item+.hl-item{border-left:1px solid #f5dfc0;}
-        .hl-val{font-size:1.5rem;font-weight:700;color:#b86200;font-family:'EB Garamond',serif;}
-        .hl-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:3px;}
-        .firma{margin-top:44px;padding-top:16px;border-top:1px solid #e8e8e8;}
-        .firma p{font-size:.88rem;color:#444;margin-bottom:16px;font-family:'EB Garamond',serif;}
-        .firma strong{color:#1c1c2e;}
-        .firma .dept{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-top:6px;}
-        .footer-note{margin-top:36px;padding-top:10px;border-top:1px solid #eee;font-size:.62rem;color:#bbb;text-align:center;line-height:1.7;}
-        .no-print{text-align:center;padding:14px;background:#f5f4f0;border-bottom:1px solid #ddd;}
-        .pbtn-p{padding:7px 20px;background:#1c1c2e;color:#fff;border:none;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
-        @media print{.no-print{display:none!important;}.page{padding:32px 40px;}}
-    </style></head><body>
-    <div class="no-print"><button class="pbtn-p" onclick="window.print()">\uD83D\uDDA8 Imprimir / Guardar PDF</button></div>
-    <div class="page">
-        <div class="logo-row">
-            <div class="company">Paz Mental<small>S.A.P.I. de C.V.</small></div>
-            <div class="doc-meta"><strong>Comunicado Interno</strong>Ciudad de M\u00e9xico, ${today}<br>Ref: VAC-${num}-${new Date().getFullYear()}</div>
-        </div>
-        <div class="subject-box">
-            <p>Asunto</p>
-            <strong>Aviso de saldo pendiente de vacaciones &mdash; ${nombre}</strong>
-        </div>
-        <p class="saludo">Buen d&iacute;a,</p>
-        <div class="body-text">
-            <p>Con base en los formatos de vacaciones recibidos por el &aacute;rea de Administraci&oacute;n hasta la fecha, el saldo pendiente de vacaciones corresponde a <strong>${diasTotal} d&iacute;a${diasTotal!==1?'s':''}</strong>, mismos que, conforme a la Ley Federal del Trabajo y a la vigencia aplicable del periodo vacacional correspondiente, deber&aacute;n ser ejercidos a m&aacute;s tardar el d&iacute;a <strong>${vencFmt}</strong>.</p>
-            <div class="highlight">
-                <div class="hl-item"><div class="hl-val">${diasTotal}</div><div class="hl-lbl">D&iacute;as pendientes totales</div></div>
-                ${diasPorTomar>0?`<div class="hl-item"><div class="hl-val">${diasPorTomar}</div><div class="hl-lbl">D&iacute;as por tomar<br>con vencimiento</div></div>`:''}
-                <div class="hl-item"><div class="hl-val" style="font-size:1rem;color:#1a6fb5">${vencFmt}</div><div class="hl-lbl">Fecha l&iacute;mite pr&oacute;xima</div></div>
-            </div>
-            <p>La informaci&oacute;n compartida en este comunicado se encuentra calculada con base en los formatos previamente enviados; en caso de identificar alguna diferencia, favor de revisarlo directamente con el &aacute;rea de Administraci&oacute;n para su validaci&oacute;n correspondiente.</p>
-            <p>Se solicita considerar y planificar oportunamente la programaci&oacute;n de los d&iacute;as pendientes en conjunto con el encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia correspondiente y sin afectar la operaci&oacute;n del &aacute;rea.</p>
-        </div>
-        <div class="firma">
-            <p>Saludos,</p>
-            <strong>Administraci&oacute;n</strong>
-            <div class="dept">Paz Mental S.A.P.I. de C.V.</div>
-        </div>
-        <div class="footer-note">Este comunicado es de car&aacute;cter informativo y fue generado el ${today}. Para cualquier aclaraci&oacute;n, comun&iacute;quese con el &aacute;rea de Administraci&oacute;n.</div>
-    </div>
-    </body></html>`);
+    win.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Comunicado \u00b7 '+nombre+'<\/title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">'
+    +'<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:\'DM Sans\',sans-serif;font-size:11.5px;color:#1a1a1a;background:white;}'
+    +'.page{max-width:720px;margin:0 auto;padding:48px 56px;}'
+    +'.logo-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:14px;border-bottom:2px solid #1c1c2e;}'
+    +'.company{font-family:\'EB Garamond\',serif;font-size:1.3rem;font-weight:600;color:#1c1c2e;}'
+    +'.company small{display:block;font-size:.7rem;font-weight:400;color:#777;font-family:\'DM Sans\',sans-serif;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}'
+    +'.doc-meta{text-align:right;font-size:.72rem;color:#888;line-height:1.7;}'
+    +'.doc-meta strong{color:#1c1c2e;display:block;font-size:.8rem;}'
+    +'.subject-box{background:#f7f6ff;border-left:3px solid #6c5ce7;padding:10px 16px;margin:20px 0 24px;border-radius:0 6px 6px 0;}'
+    +'.subject-box p{font-size:.72rem;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}'
+    +'.subject-box strong{font-size:.88rem;color:#1c1c2e;}'
+    +'.saludo{font-size:1rem;margin-bottom:16px;font-family:\'EB Garamond\',serif;}'
+    +'.body-text{font-size:.92rem;line-height:1.9;color:#2a2a2a;font-family:\'EB Garamond\',serif;text-align:justify;}'
+    +'.body-text p{margin-bottom:14px;}'
+    +'.highlight{background:#fff8f0;border:1px solid #f5dfc0;border-radius:6px;padding:12px 20px;margin:16px 0;display:flex;gap:0;flex-wrap:wrap;align-items:center;justify-content:center;}'
+    +'.hl-item{text-align:center;padding:0 16px;border-right:1px solid #f5dfc0;}'
+    +'.hl-item:last-child{border-right:none;}'
+    +'.hl-val{font-size:1.5rem;font-weight:700;color:#b86200;font-family:\'EB Garamond\',serif;}'
+    +'.hl-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-top:3px;}'
+    +'.firma{margin-top:44px;padding-top:16px;border-top:1px solid #e8e8e8;}'
+    +'.firma p{font-size:.88rem;color:#444;margin-bottom:16px;font-family:\'EB Garamond\',serif;}'
+    +'.firma strong{color:#1c1c2e;}'
+    +'.firma .dept{font-size:.7rem;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-top:6px;}'
+    +'.footer-note{margin-top:36px;padding-top:10px;border-top:1px solid #eee;font-size:.62rem;color:#bbb;text-align:center;line-height:1.7;}'
+    +'.no-print{text-align:center;padding:14px;background:#f5f4f0;border-bottom:1px solid #ddd;}'
+    +'.pbtn-p{padding:7px 20px;background:#1c1c2e;color:#fff;border:none;border-radius:6px;font-size:.8rem;cursor:pointer;font-family:\'DM Sans\',sans-serif;}'
+    +'@media print{.no-print{display:none!important;}.page{padding:32px 40px;}}'
+    +'<\/style><\/head><body>'
+    +'<div class="no-print"><button class="pbtn-p" onclick="window.print()">\uD83D\uDDA8 Imprimir / Guardar PDF<\/button><\/div>'
+    +'<div class="page">'
+    +'<div class="logo-row"><div class="company">Paz Mental<small>S.A.P.I. de C.V.<\/small><\/div>'
+    +'<div class="doc-meta"><strong>Comunicado Interno<\/strong>Ciudad de M\u00e9xico, '+today+'<br>Ref: VAC-'+num+'-'+new Date().getFullYear()+'<\/div><\/div>'
+    +'<div class="subject-box"><p>Asunto<\/p><strong>Aviso de saldo pendiente de vacaciones &mdash; '+nombre+'<\/strong><\/div>'
+    +'<p class="saludo">Buen d\u00eda,<\/p>'
+    +'<div class="body-text">'
+    +'<p>Con base en los formatos de vacaciones recibidos por el \u00e1rea de Administraci\u00f3n hasta la fecha, el saldo pendiente de vacaciones corresponde a <strong>'+diasTotal+' d\u00eda'+(diasTotal!==1?'s':'')+'<\/strong>, mismos que, conforme a la Ley Federal del Trabajo y a la vigencia aplicable del periodo vacacional correspondiente, deber\u00e1n ser ejercidos a m\u00e1s tardar el d\u00eda <strong>'+vencFmt+'<\/strong>.<\/p>'
+    +'<div class="highlight">'
+    +'<div class="hl-item"><div class="hl-val">'+diasTotal+'<\/div><div class="hl-lbl">D\u00edas pendientes totales<\/div><\/div>'
+    +(diasPorTomar>0?'<div class="hl-item"><div class="hl-val">'+diasPorTomar+'<\/div><div class="hl-lbl">D\u00edas por tomar<br>con vencimiento<\/div><\/div>':'')
+    +'<div class="hl-item"><div class="hl-val" style="font-size:1rem;color:#1a6fb5">'+vencFmt+'<\/div><div class="hl-lbl">Fecha l\u00edmite pr\u00f3xima<\/div><\/div>'
+    +'<\/div>'
+    +'<p>La informaci\u00f3n compartida en este comunicado se encuentra calculada con base en los formatos previamente enviados; en caso de identificar alguna diferencia, favor de revisarlo directamente con el \u00e1rea de Administraci\u00f3n para su validaci\u00f3n correspondiente.<\/p>'
+    +'<p>Se solicita considerar y planificar oportunamente la programaci\u00f3n de los d\u00edas pendientes en conjunto con el encargado directo, a fin de asegurar su disfrute dentro del periodo de vigencia correspondiente y sin afectar la operaci\u00f3n del \u00e1rea.<\/p>'
+    +'<\/div>'
+    +'<div class="firma"><p>Saludos,<\/p><br><strong>Administraci\u00f3n<\/strong><div class="dept">Paz Mental S.A.P.I. de C.V.<\/div><\/div>'
+    +'<div class="footer-note">Este comunicado es de car\u00e1cter informativo y fue generado el '+today+'. Para cualquier aclaraci\u00f3n, comun\u00edquese con el \u00e1rea de Administraci\u00f3n.<\/div>'
+    +'<\/div>'
+    +'<script>window.onload=function(){window.print();};<\/script><\/body><\/html>');
     win.document.close();
 }
 
-/* ── LOAD ── */
 async function loadData(){
     try{
         const[er,vr]=await Promise.all([
