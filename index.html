@@ -273,10 +273,19 @@ function calcular(emp){
         const va=vacs.filter(v=>v.num===emp.num&&v.anio===anio);
         const hayP=va.some(v=>v.st==='Pagadas');
         const haySF=va.some(v=>v.st==='Disfrutadas sin fecha');
+        const soloPuro=va.length>0&&va.every(v=>v.st==='Pagadas');
+        const soloSFPuro=va.length>0&&va.every(v=>v.st==='Disfrutadas sin fecha');
         let dp=0,dsf=0,dd=0;const detD=[],detS=[];
-        if(hayP){dp=dt;}
-        else if(haySF){dsf=dt;}
-        else{va.forEach(v=>{if(v.st==='Por disfrutar'&&v.f)detS.push(v.f);else if(v.f){dd++;detD.push(v.f);}});}
+        if(soloPuro){dp=dt;}
+        else if(soloSFPuro){dsf=dt;}
+        else{
+            va.forEach(v=>{
+                if(v.st==='Por disfrutar'&&v.f) detS.push(v.f);
+                else if(v.st==='Pagadas') dp++;
+                else if(v.st==='Disfrutadas sin fecha') dsf++;
+                else if(v.f){dd++;detD.push(v.f);}
+            });
+        }
         const us=dd+dp+dsf;
         const pend=Math.max(0,dt-us);
         let venc=null,dpv=null,ev='completo';
@@ -284,7 +293,7 @@ function calcular(emp){
             if(ap.getFullYear()>=2025){venc=ci;dpv=Math.ceil((ci-new Date())/86400000);ev=dpv<0?'exp':dpv<=30?'soon':'fut';}
             else ev='nv';
         }
-        res.push({anio,ap,ci,dt,dd,dp,dsf,us,pend,detD,detS,hayP,haySF,venc,dpv,ev});
+        res.push({anio,ap,ci,dt,dd,dp,dsf,us,pend,detD,detS,hayP,haySF,soloPuro,soloSFPuro,venc,dpv,ev});
     }
     return res;
 }
@@ -354,13 +363,21 @@ function buildCard(emp,per,pend,tv,ts,tsol){
         const fc=pct>=100?'f-ok':'f-pt';
         const rc=p.ev==='exp'&&p.pend>0?'rexp':p.ev==='soon'&&p.pend>0?'rsoon':i%2===0?'sa':'sb';
         let uHtml='';
-        if(p.hayP)uHtml=`<span class="dc-done">Todos pagados</span>`;
-        else if(p.haySF)uHtml=`<span class="dc-done">Sin fecha registrada</span>`;
-        else if(p.detD.length>0){
-            const id=`d-${emp.num}-${p.anio}`;
-            const lst=p.detD.map((d,idx)=>{const{dia,fecha}=fmtDia(d);return`<div class="fi"><span class="fn">${idx+1}.</span><span class="fdia">${dia}</span><span class="fdate">${fecha}</span></div>`;}).join('');
-            uHtml=`<button class="ftgl" onclick="tgF('${id}')">📅 ${p.detD.length} fecha${p.detD.length>1?'s':''} ▾</button><div class="flst" id="${id}">${lst}</div>`;
-        }else uHtml=`<span style="color:var(--ink-muted)">—</span>`;
+        // Pure whole-year statuses
+        if(p.soloPuro) uHtml=`<span class="dc-done">Todos pagados</span>`;
+        else if(p.soloSFPuro) uHtml=`<span class="dc-done">Sin fecha registrada</span>`;
+        else{
+            // Mixed or individual dates: show breakdown
+            let partes=[];
+            if(p.dp>0) partes.push(`<span class="dc-done">${p.dp} pagado${p.dp>1?'s':''}</span>`);
+            if(p.dsf>0) partes.push(`<span class="dc-done">${p.dsf} sin fecha</span>`);
+            if(p.detD.length>0){
+                const id=`d-${emp.num}-${p.anio}`;
+                const lst=p.detD.map((d,idx)=>{const{dia,fecha}=fmtDia(d);return`<div class="fi"><span class="fn">${idx+1}.</span><span class="fdia">${dia}</span><span class="fdate">${fecha}</span></div>`;}).join('');
+                partes.push(`<button class="ftgl" onclick="tgF('${id}')">📅 ${p.detD.length} fecha${p.detD.length>1?'s':''} ▾</button><div class="flst" id="${id}">${lst}</div>`);
+            }
+            uHtml=partes.length>0?partes.join(' '):`<span style="color:var(--ink-muted)">—</span>`;
+        }
         let vChip='';
         if(p.pend===0)vChip='';
         else if(p.ev==='nv')vChip=`<span class="vc vc-nv">Sin vencimiento</span>`;
