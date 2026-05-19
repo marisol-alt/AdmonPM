@@ -325,8 +325,8 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     card.dataset.n=emp.nombre.toLowerCase();
     card.dataset.f=tv?'vencidos':ts?'proximos':pend>0?'pendientes':'ok';
     card.dataset.sol=tsol?'1':'0';
-    card.dataset.est=emp.est==='Baja'?'baja':'activo';
-    if(emp.est==='Baja')card.classList.add('es-baja');
+    card.dataset.est=emp.est.toLowerCase()==='baja'?'baja':'activo';
+    if(emp.est.toLowerCase()==='baja')card.classList.add('es-baja');
 
     const anios=per.length;
     const gAdeudo=per.filter(p=>p.ev==='nv'&&p.pend>0);
@@ -346,7 +346,7 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     const diasPTComun=Math.max(0,diasPorTomar-gPorTomar.reduce((s,p)=>s+p.detS.length,0));
 
     let bdgs='';
-    if(emp.est==='Baja')bdgs+=`<span class="bdg bdg-baja">👤 Baja</span>`;
+    if(emp.est.toLowerCase()==='baja')bdgs+=`<span class="bdg bdg-baja">👤 Baja</span>`;
     if(pend>0)bdgs+=`<span class="bdg bdg-p">${pend} pend.</span>`;
     if(tv)bdgs+=`<span class="bdg bdg-e">⚠ Vencidos</span>`;
     else if(ts)bdgs+=`<span class="bdg bdg-s">⏰ Pronto</span>`;
@@ -559,7 +559,7 @@ function buildReport(){
     let idx=0;
 
     emps.filter(e=>e.est.toLowerCase()!=='baja').forEach(emp=>{
-        const per=calcular(emp);if(!per.length)return;
+        const per=calcular(emp);
         const gA=per.filter(p=>p.ev==='nv'&&p.pend>0);
         const gP=per.filter(p=>['exp','soon','fut'].includes(p.ev)&&p.pend>0);
         const gExp=per.filter(p=>p.ev==='exp'&&p.pend>0);
