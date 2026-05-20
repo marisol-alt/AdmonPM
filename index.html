@@ -342,8 +342,13 @@ function buildCard(emp,per,pend,tv,ts,tsol){
     const proxVencFmt=proxVenc?fmtFull(proxVenc.venc):'sin fecha de vencimiento registrada';
     const diasVencidos=gPorTomar.filter(p=>p.ev==='exp').reduce((s,p)=>s+p.pend,0);
     const diasSol=per.reduce((s,p)=>s+p.detS.length,0);
-    const totalPendComun=pend; // TOTAL real: adeudo + por tomar (including programados)
-    const diasPTComun=Math.max(0,diasPorTomar-diasVencidos); // vigentes con vencimiento
+    // Params for comunicado:
+    // diasTotal = pend (todo lo pendiente)
+    // diasPorTomar = vigentes netos = diasPorTomar - diasVencidos - diasSol
+    // diasVencidos = ya vencidos sin ejercer
+    // diasProgramados = ya solicitados (detS)
+    const totalPendComun=pend;
+    const diasPTComun=Math.max(0,diasPorTomar-diasVencidos-diasSol);
 
     let bdgs='';
     if(emp.est.toLowerCase()==='baja')bdgs+=`<span class="bdg bdg-baja">👤 Baja</span>`;
@@ -714,11 +719,9 @@ function abrirComunicado(nombre,num,diasTotal,vencFmt,diasPorTomar,diasVencidos,
     const today=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'});
     const win=window.open('','_blank','width=820,height=820');
 
-    const diasVigentes=Math.max(0,diasPorTomar-diasVencidos);
-    // diasTotal = full pending (adeudo + programados + vigentes + vencidos)
-    // diasPorTomar = vigentes + vencidos (has vencimiento)
-    // diasProgramados = already solicited from vigentes
-    const diasAdeudo=Math.max(0,diasTotal-diasPorTomar-diasProgramados);
+    const diasVigentes=diasPorTomar; // already net: vigentes - vencidos - programados
+    // diasTotal = adeudo + programados + vencidos + vigentes
+    const diasAdeudo=Math.max(0,diasTotal-diasProgramados-diasVencidos-diasVigentes);
 
     // ── Alerta vencidos ──
     let alertaVencidos='';
